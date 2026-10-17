@@ -54,3 +54,20 @@ def test_supervisor_stops_on_repeated_verdict():
 def test_parse_json_handles_fences_and_thinking():
     assert parse_json('<think>hmm {"a": 0}</think>```json\n{"a": 1}\n```') == {"a": 1}
     assert parse_json('Sure! {"b": [1, 2]} hope that helps') == {"b": [1, 2]}
+
+
+def test_one_failing_claim_does_not_abort_the_mission():
+    m = Mission(Config())
+    real = m.check_claim
+
+    async def flaky(c):
+        if c.id == "c2":
+            raise ValueError("Expecting ',' delimiter")
+        await real(c)
+
+    m.check_claim = flaky
+    summary = asyncio.run(m.run_claims(["The Eiffel Tower was completed in 1889.", "Some claim", "Another claim"]))
+    statuses = {c["id"]: c["status"] for c in summary["claims"]}
+    assert statuses["c2"] == "unverifiable"
+    assert statuses["c1"] != "unverifiable" or statuses["c3"] != "unverifiable"
+    assert summary["done"]  # every claim still closed

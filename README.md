@@ -25,8 +25,11 @@ Every step streams to a live UI, so you can watch the team plan, disagree, get c
 
 `eval/claims.json` holds 24 labeled facts and myths, split into `dev` and a held-out `test` set.
 `python -m eval.improve` scores the current playbook (all prompts live in `playbooks/vN.json`), lets an improver
-agent read the dev failures and rewrite the prompts, re-scores, and **keeps the new version only if dev improves**.
-It then reports the before and after score on the held-out test claims. History goes to `playbooks/history.jsonl`.
+agent read the dev failures and rewrite **one prompt per round** (so every gain is attributable to a single prompt),
+re-scores, and **keeps the new version only if dev improves**. It then reports the before and after score on the
+held-out test claims. Each round appends one self-contained record to `playbooks/history.jsonl`: the changed prompt,
+its text before and after, and the dev and test scores. `--rounds N` stops early when there are no dev failures left
+or the improver proposes no change.
 
 ## Run it
 

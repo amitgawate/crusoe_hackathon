@@ -112,7 +112,7 @@ class Mission:
         ]
         await self.emit("claims", claims=[{"id": c.id, "text": c.text, "high_stakes": c.high_stakes}
                                           for c in self.claims])
-        await asyncio.gather(*(self.check_claim(c) for c in self.claims))
+        await asyncio.gather(*(self.check_claim_safely(c) for c in self.claims))
         return await self.finish()
 
     async def run_claims(self, claims: list[str], dod: DoD | None = None) -> dict:
@@ -121,10 +121,17 @@ class Mission:
                               acceptance_criteria=["The verdict answers the claim as stated.",
                                                    "Every cited snippet supports the verdict."])
         self.claims = [ClaimState(id=f"c{i + 1}", text=t) for i, t in enumerate(claims)]
-        await asyncio.gather(*(self.check_claim(c) for c in self.claims))
+        await asyncio.gather(*(self.check_claim_safely(c) for c in self.claims))
         return await self.finish()
 
     # ---------- per-claim loop ----------
+
+    async def check_claim_safely(self, c: ClaimState):
+        """One claim's failure (bad JSON twice, retries exhausted) closes that claim, not the whole mission."""
+        try:
+            await self.check_claim(c)
+        except Exception as e:
+            await self.close(c, "unverifiable", f"Agent error: {type(e).__name__}: {str(e)[:150]}")
 
     async def check_claim(self, c: ClaimState):
         c.status = "working"

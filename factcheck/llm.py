@@ -4,9 +4,26 @@ import json
 import random
 import re
 import time
+from collections import deque
 
 from .config import Config
 from . import mock
+
+# Request timestamps per model, shared by every LLM instance in the process: Crusoe's limit is per project and model.
+_sent: dict[str, deque] = {}
+
+
+async def _pace(model: str, rpm: int):
+    """Wait until sending one more request keeps this model under `rpm` requests per rolling minute."""
+    q = _sent.setdefault(model, deque())
+    while True:
+        now = time.monotonic()
+        while q and now - q[0] >= 60:
+            q.popleft()
+        if len(q) < rpm:
+            q.append(now)
+            return
+        await asyncio.sleep(60 - (now - q[0]) + random.uniform(0, 0.5))
 
 
 class LLM:
@@ -35,6 +52,7 @@ class LLM:
         from openai import APIStatusError, RateLimitError, InternalServerError, APIConnectionError
 
         for attempt in range(max_tries):
+            await _pace(model, self.cfg.rpm)
             try:
                 resp = await self.client.chat.completions.create(
                     model=model,
