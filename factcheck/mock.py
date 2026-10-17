@@ -62,7 +62,7 @@ def llm(role: str, system: str, user: str) -> str:
     elif role == "extractor":
         sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", user) if len(s.split()) >= 4]
         out = {"claims": [{"text": s, "high_stakes": any(k in s.lower() for k in HIGH_STAKES)}
-                          for s in sentences[:6]]}
+                          for s in sentences]}
     elif role == "query_writer":
         attempt = int(_field(user, "Attempt") or 1)
         if attempt == 1 and re.search(r"\d", claim):

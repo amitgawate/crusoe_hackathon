@@ -7,6 +7,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
 from factcheck.cli import SAMPLE_TEXT
+from factcheck.articles import fetch_article
 from factcheck.config import Config
 from factcheck.orchestrator import Mission
 
@@ -16,6 +17,15 @@ app = FastAPI(title="Done Means Done: fact-check agent team")
 class RunRequest(BaseModel):
     text: str
     goal: str = "Fact-check this text"
+
+
+class ArticleRequest(BaseModel):
+    url: str
+
+
+@app.post("/api/article")
+async def article(req: ArticleRequest):
+    return await fetch_article(req.url)
 
 
 @app.get("/")

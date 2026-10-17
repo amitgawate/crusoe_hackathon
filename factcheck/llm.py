@@ -45,10 +45,14 @@ class LLM:
             return mock.llm(role, system, user)
         model = self.cfg.model_strong if strong else self.cfg.model_fast
         messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
+        extra_body = None
+        if role == "extractor" and "nemotron" in model.lower():
+            # Reserve the output budget for claims instead of internal reasoning.
+            extra_body = {"chat_template_kwargs": {"enable_thinking": False}}
         async with self.sem:
-            return await self._with_backoff(model, messages)
+            return await self._with_backoff(model, messages, extra_body=extra_body)
 
-    async def _with_backoff(self, model, messages, max_tries=6):
+    async def _with_backoff(self, model, messages, max_tries=6, extra_body=None):
         from openai import APIStatusError, RateLimitError, InternalServerError, APIConnectionError
 
         for attempt in range(max_tries):
@@ -60,9 +64,14 @@ class LLM:
                     max_tokens=self.cfg.max_tokens,
                     temperature=1.0,
                     top_p=0.95,
+                    extra_body=extra_body,
                 )
                 if resp.usage:
                     self.tokens += resp.usage.total_tokens
+                if resp.choices[0].finish_reason == "length":
+                    if "nemotron" in model.lower():
+                        extra_body = {"chat_template_kwargs": {"enable_thinking": False}}
+                    raise ValueError("response exceeded max_tokens; refusing truncated output")
                 content = resp.choices[0].message.content or ""
                 if not content.strip():
                     raise ValueError("empty content (reasoning may have used up max_tokens)")

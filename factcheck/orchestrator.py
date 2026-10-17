@@ -104,12 +104,19 @@ class Mission:
         await self.emit("plan", dod=self.dod.__dict__)
 
         ex = await self.llm.json("extractor", self.p["extractor"], text)
-        claims = ex.get("claims", [])[:6]
-        self.claims = [
-            ClaimState(id=f"c{i + 1}", text=str(c.get("text", "")).strip(), high_stakes=bool(c.get("high_stakes")))
-            for i, c in enumerate(claims)
-            if str(c.get("text", "")).strip()
-        ]
+        distinct = {}
+        for c in ex.get("claims", []):
+            claim_text = " ".join(str(c.get("text", "")).split())
+            key = claim_text
+            if not key:
+                continue
+            high_stakes = bool(c.get("high_stakes"))
+            if key in distinct:
+                distinct[key].high_stakes |= high_stakes
+            else:
+                distinct[key] = ClaimState(id=f"c{len(distinct) + 1}", text=claim_text,
+                                           high_stakes=high_stakes)
+        self.claims = list(distinct.values())[:6]
         await self.emit("claims", claims=[{"id": c.id, "text": c.text, "high_stakes": c.high_stakes}
                                           for c in self.claims])
         await asyncio.gather(*(self.check_claim_safely(c) for c in self.claims))

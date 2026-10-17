@@ -81,7 +81,11 @@
       <h2>Mission</h2>
       <label for="goal">One-line goal</label>
       <input id="goal" value="Fact-check this text before we publish it">
-      <label for="text">Text</label>
+      <label for="article-url">Article link</label>
+      <input id="article-url" type="url" placeholder="https://example.com/article">
+      <button id="download">Download &amp; run</button>
+      <div id="article-status" role="status" style="margin-top:8px;color:var(--muted)"></div>
+      <label for="text">Article text (downloaded or pasted; up to 6 facts per article)</label>
       <textarea id="text"></textarea>
       <button id="run">Run the team</button>
     </div>
@@ -111,6 +115,11 @@
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 let counts = { llm: 0, search: 0, dec: 0 };
+
+function setBusy(busy) {
+  $("run").disabled = busy;
+  $("download").disabled = busy;
+}
 
 fetch("/api/config").then((r) => r.json()).then((c) => {
   $("text").value = c.sample;
@@ -223,13 +232,15 @@ function handle(ev) {
   $("s-llm").textContent = counts.llm; $("s-search").textContent = counts.search; $("s-dec").textContent = counts.dec;
 }
 
-$("run").onclick = async () => {
-  $("run").disabled = true;
+async function runMission() {
+  if (!$("text").value.trim()) return;
+  setBusy(true);
   counts = { llm: 0, search: 0, dec: 0 };
   $("mchecks").innerHTML = '<div class="empty">Running…</div>';
   $("claims").innerHTML = '<div class="empty">Planner is writing the definition of done…</div>';
   try {
     const resp = await fetch("/api/run", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: $("text").value, goal: $("goal").value }) });
+    if (!resp.ok) throw new Error("Could not start the fact-check. Please try again.");
     const reader = resp.body.getReader();
     const dec = new TextDecoder();
     let buf = "";
@@ -246,7 +257,33 @@ $("run").onclick = async () => {
   } catch (e) {
     handle({ type: "error", message: String(e) });
   }
-  $("run").disabled = false;
+  setBusy(false);
+}
+
+$("run").onclick = runMission;
+$("download").onclick = async () => {
+  const url = $("article-url").value.trim();
+  if (!url || !$("article-url").checkValidity()) {
+    $("article-status").textContent = "Enter a valid article link first.";
+    return;
+  }
+  setBusy(true);
+  $("article-status").textContent = "Downloading and extracting the article…";
+  try {
+    const resp = await fetch("/api/article", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url }) });
+    const article = await resp.json();
+    if (!resp.ok) throw new Error(typeof article.detail === "string" ? article.detail : "Could not download this article.");
+    const metadata = [article.title && `Title: ${article.title}`, article.publisher && `Publisher: ${article.publisher}`,
+      article.published && `Published: ${article.published}`, `Source: ${article.url}`].filter(Boolean).join("\n");
+    $("text").value = `${metadata}\n\n${article.text}`;
+    $("text").scrollTop = 0;
+    $("article-status").textContent = `Downloaded ${article.words} words${article.title ? ` · ${article.title}` : ""}. Text is shown below.`;
+    await runMission();
+  } catch (e) {
+    $("article-status").textContent = e.message;
+  } finally {
+    setBusy(false);
+  }
 };
 </script>
 </body>

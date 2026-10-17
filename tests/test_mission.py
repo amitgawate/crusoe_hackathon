@@ -71,3 +71,45 @@ def test_one_failing_claim_does_not_abort_the_mission():
     assert statuses["c2"] == "unverifiable"
     assert statuses["c1"] != "unverifiable" or statuses["c3"] != "unverifiable"
     assert summary["done"]  # every claim still closed
+
+
+def test_mission_caps_distinct_claims_at_six():
+    text = (
+        "The Eiffel Tower was completed in 1889. "
+        "The Great Wall is visible from the Moon. "
+        "Humans only use 10% of their brains. "
+        "Lightning never strikes the same place twice. "
+        "Water will boil at 100 degrees Celsius at sea level. "
+        "A goldfish has a three-second memory. "
+        "Mount Everest is the highest mountain above sea level. "
+        "Taking vitamin C every day prevents the common cold."
+    )
+    summary, events = run("The Eiffel Tower was completed in 1889. " + text)
+    assert len(summary["claims"]) == 6
+    assert summary["claims"][-1]["text"] == "A goldfish has a three-second memory."
+    assert len([e for e in events if e["type"] == "claim_done"]) == 6
+    assert summary["done"]
+
+
+def test_mission_checks_repeated_claim_once():
+    summary, events = run(
+        "The Eiffel Tower was completed in 1889. "
+        "The Eiffel Tower was completed in 1889."
+    )
+    assert len(summary["claims"]) == 1
+    assert len([e for e in events if e["type"] == "claim_done"]) == 1
+    assert summary["claims"][0]["status"] == "done"
+
+
+def test_short_input_keeps_its_actual_claim_count():
+    summary, events = run("The Eiffel Tower was completed in 1889.")
+    assert len(summary["claims"]) == 1
+    assert summary["claims"][0]["verdict"]["verdict"] == "true"
+    assert summary["done"]
+
+
+def test_distinct_case_sensitive_units_are_not_merged():
+    summary, events = run("The device consumes 5 mW. The device consumes 5 MW.")
+    assert [c["text"] for c in summary["claims"]] == [
+        "The device consumes 5 mW.", "The device consumes 5 MW."
+    ]
