@@ -31,6 +31,34 @@ held-out test claims. Each round appends one self-contained record to `playbooks
 its text before and after, and the dev and test scores. `--rounds N` stops early when there are no dev failures left
 or the improver proposes no change.
 
+## Live FEVER improvement dashboard
+
+Open `http://localhost:8000/improvement` and click **Start experiment**. The dashboard shows stage progress,
+provisional accuracy, held-out before/after scores, prompt changes, and per-claim evidence. **Stop** retains
+partial results; refreshing the browser reconnects to the same run. Export the full result as JSON.
+
+For a demo, click **Replay last run** after a completed experiment. Pause, step, scrub, or change speed;
+**Back to results** returns to the latest server state. Replay uses the saved verdict order with presentation
+timing (per-claim timestamps were not recorded), never sends inference requests, and exports the original
+complete result. The full-width prompt diff highlights exact word additions/removals. Stage motion, smooth
+score updates, and a cumulative accuracy trace follow actual results; reduced-motion preferences are respected.
+
+This fast experiment uses a fixed 30-claim sample from
+[CopeNLU's FEVER gold-evidence dataset](https://huggingface.co/datasets/copenlu/fever_gold_evidence): 15 development
+and 15 held-out claims, five per label in each split, with no repeated claim IDs or shared evidence pages.
+`eval/fever_sample.json` records source attribution, sampling method, source checksum, and dataset license metadata.
+The judge sees only claims and evidence; the improver sees development failures. One candidate judge prompt is
+frozen before held-out evaluation. Both versions use the configured strong model and identical evidence.
+
+This is **judge-only label accuracy**, not end-to-end article accuracy or the official FEVER retrieval score.
+The strict mapping is SUPPORTS → true, REFUTES → false, NOT ENOUGH INFO → unverifiable; misleading and API errors
+count as incorrect. Scores are provisional until the split completes. A small, single-run gain needs replication;
+repeated tuning against this same test set would invalidate its held-out role. No candidate is activated automatically.
+
+Runs require live Crusoe credentials (mock mode is rejected), use the existing request pacing and concurrency,
+and save progress under `eval/results/fever/`. Run one Uvicorn worker for this local demo. A server restart interrupts
+an active experiment; browser refresh does not. The existing full-team CLI improvement loop above is unchanged.
+
 ## Run it
 
 ```bash

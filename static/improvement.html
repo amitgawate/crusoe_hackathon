@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Self-improvement lab · Done Means Done</title>
+<style>
+:root{color-scheme:dark;--bg:#0e1116;--panel:#161b22;--line:#2a3340;--text:#e6edf3;--muted:#8b98a8;--blue:#58a6ff;--green:#4ed6a4;--red:#ff7a82;--purple:#bc8cff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 ui-sans-serif,system-ui,-apple-system,sans-serif}a{color:var(--blue);text-decoration:none}button,select{font:inherit}button{cursor:pointer;border:1px solid var(--line);background:#202a36;color:var(--text);padding:10px 16px;border-radius:8px;font-weight:600}button:hover{border-color:var(--blue)}button:disabled{opacity:.45;cursor:default}button.primary{background:var(--green);color:#09241c;border-color:var(--green)}button.stop{color:var(--red)}header{padding:16px 32px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:28px}header b{font-size:18px}header a{color:var(--muted)}.active{color:var(--green)}main{max-width:1360px;margin:auto;padding:32px}.hero{display:flex;justify-content:space-between;align-items:center;gap:24px}.eyebrow{color:var(--green);font-size:11px;letter-spacing:.17em;font-weight:700}h1{font-size:34px;letter-spacing:-1px;margin:8px 0}h2{font-size:16px;margin:0 0 6px}p{margin:6px 0;color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap}.badge{display:inline-flex;align-items:center;gap:7px;font-size:12px;border:1px solid var(--line);border-radius:20px;padding:4px 10px;color:var(--muted)}.badge.running{color:var(--green)}.dot{width:6px;height:6px;background:currentColor;border-radius:50%}.running .dot{animation:pulse 1.3s infinite}@keyframes pulse{50%{opacity:.25}}.meta{margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted)}.notice{margin:20px 0;padding:12px 16px;border-left:3px solid var(--blue);background:#121f2b;border-radius:0 6px 6px 0;color:#bccddd}.notice.error{border-color:var(--red)}.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:24px 0}.step{position:relative;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:14px;overflow:hidden}.step span{font-size:11px;color:var(--muted);display:block;margin-bottom:8px}.step b{font-size:13px}.step small{display:block;color:var(--muted);margin-top:8px}.step.current{border-color:var(--green)}.step.done{border-color:#2b6251}.step .fill{position:absolute;bottom:0;left:0;height:3px;background:var(--green);transition:width .6s}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}.metric{padding:18px 20px;background:var(--panel);border:1px solid var(--line);border-radius:12px}.metric span{font-size:12px;color:var(--muted)}.metric b{display:block;font-size:34px;font-weight:600;letter-spacing:-1px;font-variant-numeric:tabular-nums;margin:5px 0}.metric small{color:var(--muted)}.grid{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}.panel{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:22px}.sub{font-size:12px;color:var(--muted)}.legend{display:flex;gap:18px;margin:18px 0;color:var(--muted);font-size:12px}.swatch{display:inline-block;width:9px;height:9px;margin-right:6px;border-radius:2px}.chart-group{margin:20px 0 24px}.chart-group h3{font-size:12px;color:var(--muted);font-weight:500;margin:0 0 12px}.barrow{display:grid;grid-template-columns:72px 1fr 85px;gap:10px;align-items:center;margin:9px 0;font-size:12px}.track{height:18px;border-radius:4px;background:#222a35;overflow:hidden}.bar{height:100%;transition:width .7s ease;border-radius:4px}.barrow strong{text-align:right;font-variant-numeric:tabular-nums;font-size:12px}.axis{display:flex;justify-content:space-between;color:#718095;font-size:10px;margin:5px 95px 0 82px}.diagnosis{padding:14px 0;min-height:80px;color:#c3ceda;white-space:pre-wrap}.prompt-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.prompt-grid label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}pre{white-space:pre-wrap;word-break:break-word;font:12px/1.5 ui-monospace,monospace;background:#0f141b;border:1px solid var(--line);border-radius:6px;padding:12px;max-height:230px;overflow:auto;margin:0}details summary{cursor:pointer;color:var(--blue);font-size:12px;margin-bottom:12px}.log{max-height:160px;overflow:auto;font-size:12px;border-top:1px solid var(--line);padding-top:12px;margin-top:16px}.log div{padding:5px 0;color:#b8c4d2}.log time{font-variant-numeric:tabular-nums;color:var(--muted);margin-right:10px}.wide{margin-top:16px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px}.tabs{display:flex;gap:4px}.tabs button{padding:6px 12px;font-size:12px;background:transparent}.tabs button.selected{background:#253a36;border-color:#3b8b70;color:var(--green)}select{border:1px solid var(--line);background:#121923;color:var(--text);border-radius:6px;padding:6px}table{border-collapse:collapse;width:100%;font-size:12px}th{text-align:left;padding:10px 12px;color:var(--muted);font-weight:500;border-bottom:1px solid var(--line)}td{padding:12px;border-bottom:1px solid #222b36;vertical-align:top}td:first-child{max-width:580px;width:49%;font-size:13px}tr:last-child td{border:0}.tag{white-space:nowrap;font-size:11px;padding:3px 7px;background:#222c39;border-radius:5px;display:inline-block}.good{color:var(--green)}.bad{color:var(--red)}.neutral{color:var(--muted)}.evidence{color:var(--muted);font-size:12px;margin-top:8px}.evidence summary{color:#8799b0}.evidence p{margin:8px 0}.footer{font-size:11px;color:var(--muted);margin-top:18px}.empty{padding:20px;text-align:center;color:var(--muted)}#connection{margin-left:auto;font-size:11px;color:var(--muted)}@media(max-width:850px){main{padding:20px}.hero{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr 1fr}.section-head{align-items:flex-start;flex-direction:column}.table-wrap{overflow:auto}header{padding:15px;gap:15px}header b{font-size:14px}h1{font-size:28px}.prompt-grid{grid-template-columns:1fr}}
+/* Motion follows real score changes and replay steps. */
+[hidden]{display:none!important}.badge.replay{color:var(--purple);border-color:#765a98}.hero{align-items:flex-start}.hero .actions{max-width:430px;justify-content:flex-end}.replay-controls{display:flex;align-items:center;gap:12px;padding:14px 18px;background:#211c2c;border:1px solid #59436f;border-radius:10px;margin-top:18px;flex-wrap:wrap}.replay-controls input{flex:1;min-width:160px;accent-color:var(--purple)}.replay-controls label,.replay-controls small{color:#c1accf;font-size:12px}.replay-controls button{padding:7px 12px}.replay-note{width:100%;font-size:11px;color:#ad9abb}.step.current{box-shadow:0 0 22px #4ed6a41c;animation:stage-breathe 2s ease-in-out infinite}.step.current:before{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 25%,#4ed6a40a 45%,transparent 65%);background-size:200% 100%;animation:stage-sweep 2.5s linear infinite;pointer-events:none}.step.current b{color:var(--green)}body.replaying .step.current{border-color:var(--purple)}body.replaying .step.current b{color:var(--purple)}.step.done span{color:var(--green)}.metric{transition:border-color .3s,box-shadow .3s}.metric.changed{animation:metric-flash .7s ease-out}.flowline{height:3px;background:#26313a;border-radius:3px;margin:-13px 6px 23px;overflow:hidden}.flowline i{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .65s ease}.bar{position:relative;overflow:hidden;transition:width .65s cubic-bezier(.2,.7,.2,1)}.bar.active:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,#ffffff60,transparent);transform:translateX(-100%);animation:bar-sheen 1.8s infinite}.spotlight{display:flex;align-items:center;gap:18px;min-height:86px;margin-bottom:18px;padding:18px 22px;border:1px solid #304b48;border-radius:12px;background:radial-gradient(ellipse at left,#15302a70,transparent 70%),var(--panel)}.orbit{flex-shrink:0;width:40px;height:40px;border-radius:50%;border:2px solid #32594c;border-top-color:var(--green);display:grid;place-items:center;color:var(--green);font-size:15px}.spotlight.moving .orbit{animation:spin 2.5s linear infinite}.spotlight.moving .orbit span{animation:spin 2.5s linear infinite reverse}.spotlight b{display:block;font-size:15px}.spotlight small{color:var(--muted);display:block;margin-top:3px}.spotlight .trail{margin-left:auto;text-align:right;font-size:12px;max-width:350px;color:var(--muted)}.trace-wrap{border-top:1px solid var(--line);padding-top:14px;margin-top:8px}.trace-head{display:flex;justify-content:space-between;gap:12px;font-size:11px;color:var(--muted);margin-bottom:8px}.trace{width:100%;height:80px;display:block;overflow:visible}.trace polyline{stroke:var(--green);stroke-width:2.5;fill:none;stroke-linejoin:round;stroke-linecap:round}.trace circle{fill:var(--green)}.trace .trace-grid{stroke:#2b3541;stroke-width:1}.diff-header{display:flex;align-items:center;justify-content:space-between;gap:12px}.diff-legend{display:flex;gap:12px;color:var(--muted);font-size:12px}.diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:16px}.diff-side+ .diff-side{border-left:1px solid var(--line)}.diff-title{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:#1b2430;font-size:12px}.diff-copy{padding:18px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.9;font-size:13px;color:#9caebf;max-height:370px;overflow:auto;min-height:150px;background:#10161e}.diff-copy ins{background:#204c3b;color:#b3f5d8;text-decoration:none;box-shadow:0 0 0 2px #204c3b;border-radius:2px}.diff-copy del{background:#532c34;color:#ffc2ca;text-decoration:line-through;box-shadow:0 0 0 2px #532c34;border-radius:2px}.diff-copy.ready{animation:reveal .6s ease-out}.diff-count{font:12px ui-monospace,monospace}.recorded-label{color:var(--purple)}@keyframes spin{to{transform:rotate(360deg)}}@keyframes stage-breathe{50%{box-shadow:0 0 24px #4ed6a430}}@keyframes stage-sweep{to{background-position:-200% 0}}@keyframes bar-sheen{to{transform:translateX(150%)}}@keyframes metric-flash{30%{border-color:var(--green);box-shadow:0 0 20px #4ed6a425}}@keyframes reveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@media(max-width:850px){.diff-grid{grid-template-columns:1fr}.diff-side+ .diff-side{border-left:0;border-top:1px solid var(--line)}.hero .actions{justify-content:flex-start;max-width:none}.spotlight .trail{display:none}.diff-header{align-items:flex-start;flex-direction:column}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+</style>
+</head>
+<body>
+<header><b>Done Means Done</b><a href="/">Fact-checking</a><span class="active">Self-improvement</span><span id="connection">Connecting…</span></header>
+<main>
+<div class="hero"><div><div class="eyebrow">THE SELF-IMPROVEMENT LAB</div><h1>Learn from mistakes. Prove the gain.</h1><p>A live experiment against independent Wikipedia claim labels.</p></div><div class="actions"><button id="replay" disabled>↻ Replay last run</button><button id="start" class="primary" disabled>Start experiment</button><button id="stop" class="stop" hidden>Stop</button><button id="export" disabled>Export results</button></div></div>
+<div class="meta"><span id="status" class="badge"><i class="dot"></i> Ready</span><span>FEVER · 30 claims</span><span>15 development / 15 held out</span><span id="runtime">One prompt revision</span></div>
+<div id="notice" class="notice" role="status">Ready to measure. No scores are shown until the live model returns a verdict. Expected duration: a few minutes; API latency may extend it.</div>
+<div id="replay-controls" class="replay-controls" hidden>
+<button id="pause">Pause</button><button id="next">Next step →</button>
+<input id="scrub" type="range" min="0" max="1" value="0" aria-label="Replay position">
+<span id="replay-position" class="sub"></span><label for="speed">Speed</label><select id="speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select>
+<button id="exit-replay">Back to results</button><div class="replay-note">Paced replay of saved verdict order. Original per-claim timing was not recorded; no new model calls or results are generated.</div>
+</div>
+<div id="steps" class="steps"></div><div class="flowline"><i id="flow-progress"></i></div>
+<div id="spotlight" class="spotlight"><div class="orbit" aria-hidden="true"><span>✦</span></div><div><b id="focus-title">Ready for the next experiment</b><small id="focus-subtitle">Follow each stage from baseline to held-out comparison.</small></div><div id="last-claim" class="trail"></div></div>
+<div class="metrics"><div class="metric"><span>Baseline · held out</span><b id="base-score">—</b><small id="base-detail">Awaiting evaluation</small></div><div class="metric"><span>Candidate · held out</span><b id="candidate-score">—</b><small id="candidate-detail">Awaiting evaluation</small></div><div class="metric"><span>Held-out change</span><b id="delta">—</b><small id="delta-detail">Measured after both complete</small></div><div class="metric"><span id="elapsed-label">Run time</span><b id="elapsed">0:00</b><small id="usage">0 LLM calls · 0 tokens</small></div></div>
+<div class="grid"><section class="panel"><h2>Accuracy comparison</h2><p class="sub">Same claims, same evidence, same model. Only the judge prompt changes.</p><div class="legend"><span><i class="swatch" style="background:var(--blue)"></i>Baseline</span><span><i class="swatch" style="background:var(--green)"></i>Candidate</span></div><div id="charts"></div><div class="trace-wrap"><div class="trace-head"><span id="trace-label"></span><span id="trace-count"></span></div><svg id="trace" class="trace" viewBox="0 0 480 80" preserveAspectRatio="none" role="img" aria-label="Cumulative accuracy for the current stage"></svg></div><p class="sub">Live percentages use completed claims and are provisional until 15/15. API errors count as incorrect.</p></section>
+<section class="panel"><h2>What the agent learned</h2><p class="sub">The improver sees development failures only.</p><div id="diagnosis" class="diagnosis">Waiting for the baseline. The agent will diagnose mistakes and propose one general prompt change.</div><a href="#prompt-diff">See exactly what changed ↓</a><div id="log" class="log"><div>No experiment has started.</div></div></section></div>
+<section id="prompt-diff" class="panel wide"><div class="diff-header"><div><h2>Judge prompt changes</h2><p class="sub">Exact word-level comparison. Unchanged instructions stay visible for context.</p></div><div class="diff-legend"><span class="bad">− Removed</span><span class="good">+ Added</span><span id="diff-count" class="diff-count">Awaiting candidate</span></div></div>
+<div class="diff-grid"><div class="diff-side"><div class="diff-title"><b id="diff-version">Baseline</b><span class="neutral">Before</span></div><div id="before" class="diff-copy"></div></div><div class="diff-side"><div class="diff-title"><b>Candidate</b><span class="good">After learning</span></div><div id="after" class="diff-copy"></div></div></div></section>
+<section class="panel wide"><div class="section-head"><div><h2>Every claim, every verdict</h2><p class="sub">Inspect the gold evidence and see exactly which predictions changed.</p></div><div class="actions"><div class="tabs"><button id="dev-tab" class="selected">Development</button><button id="test-tab">Held out</button></div><select id="filter" aria-label="Filter claim outcomes"><option value="all">All claims</option><option value="fixed">Fixed</option><option value="regressed">Regressed</option><option value="errors">API errors</option></select></div></div><div class="table-wrap"><table><thead><tr><th>Claim / evidence</th><th>Gold label</th><th>Baseline</th><th>Candidate</th><th>Change</th></tr></thead><tbody id="claims"></tbody></table></div></section>
+<div class="footer"><a href="https://huggingface.co/datasets/copenlu/fever_gold_evidence" target="_blank" rel="noopener">Dataset: CopeNLU / FEVER gold evidence</a> · Balanced fixed subset, selected before evaluation. No shared evidence pages between splits. <strong>Judge-only label accuracy, not the full FEVER retrieval score.</strong> Small-sample demo; gains need replication. Candidates are saved for review and never automatically activated.</div>
+</main>
+<script id="demo-helpers">
+// Keep exact whitespace so either side reconstructs its original prompt.
+function diffWords(before, after) {
+  const a=before.match(/\s+|[^\s]+/g)||[], b=after.match(/\s+|[^\s]+/g)||[];
+  const lengths=Array.from({length:a.length+1},()=>new Uint32Array(b.length+1));
+  for(let i=a.length-1;i>=0;i--) for(let j=b.length-1;j>=0;j--)
+    lengths[i][j]=a[i]===b[j]?1+lengths[i+1][j+1]:Math.max(lengths[i+1][j],lengths[i][j+1]);
+  const chunks=[];
+  function add(type,text){if(chunks.at(-1)?.type===type)chunks.at(-1).text+=text;else chunks.push({type,text})}
+  let i=0,j=0;
+  while(i<a.length||j<b.length){
+    if(i<a.length&&j<b.length&&a[i]===b[j]){add('same',a[i++]);j++}
+    else if(i<a.length&&(j===b.length||lengths[i+1][j]>=lengths[i][j+1]))add('removed',a[i++]);
+    else add('added',b[j++]);
+  }
+  return chunks;
+}
+
+// Verdict order is recorded; per-claim timing is not. Frames are paced presentation steps.
+function replayFrames(saved) {
+  if(saved.status!=='complete')return [];
+  const current={...structuredClone(saved),status:'running',stage:'baseline_dev',results:{},
+    candidate_prompt:null,diagnosis:null,outcome:null,message:null,calls:null,tokens:null,events:[]};
+  const frames=[], events=saved.events||[];
+  const push=()=>frames.push(structuredClone(current));
+  function through(message){const i=events.findIndex(e=>e.message===message);if(i>=0)current.events=events.slice(0,i+1)}
+  push();
+  for(const key of ['baseline_dev','improve','candidate_dev','baseline_test','candidate_test']){
+    if(key==='improve'){
+      if(!saved.candidate_prompt)continue;
+      current.stage=key;
+      through('Improver is reviewing development mistakes only. Test claims remain held out.');push();
+      current.candidate_prompt=saved.candidate_prompt;current.diagnosis=saved.diagnosis;
+      through('Candidate prompt frozen. No test labels were used to write it.');push();
+      continue;
+    }
+    const result=saved.results[key];if(!result)continue;
+    current.stage=key;
+    current.results[key]={...result,rows:[],correct:0,completed:0,accuracy:null,errors:0};
+    through(`Scoring ${key.replaceAll('_',' ')}: ${result.total} claims.`);push();
+    for(const row of result.rows){
+      const r=current.results[key];r.rows.push(structuredClone(row));r.completed=r.rows.length;
+      r.correct+=row.correct?1:0;r.errors+=row.error?1:0;r.accuracy=Math.round(1000*r.correct/r.completed)/10;
+      push();
+    }
+  }
+  frames.push(structuredClone(saved));
+  return frames;
+}
+
+</script>
+<script>
+const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const stages=['baseline_dev','improve','candidate_dev','baseline_test','candidate_test'];
+const names=['Measure baseline','Learn from errors','Check candidate','Test baseline','Test candidate'];
+const subtitles=['Development · 15 claims','One judge prompt revision','Development · 15 claims','Held out · 15 claims','Held out · 15 claims'];
+let state=null, latest=null, split='dev', busy=false, playback=null, replayTimer=null, lastPrompt='';
+const pct=x=>x?.accuracy==null?'—':`${x.accuracy.toFixed(1)}%`;
+const full=x=>x&&x.completed===x.total;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function animateScore(id,value,suffix='%') {
+  const el=$(id),format=n=>(id==='delta'&&n>0?'+':'')+n.toFixed(1)+suffix,target=value==null?'—':format(value);
+  if(el.dataset.target===target)return;
+  const from=parseFloat(el.textContent)||0;el.dataset.target=target;
+  if(el._animation)cancelAnimationFrame(el._animation);
+  const tile=el.closest('.metric');if(tile){tile.classList.remove('changed');void tile.offsetWidth;tile.classList.add('changed')}
+  if(value==null||reduced){el.textContent=target;return}
+  const start=performance.now();
+  const frame=now=>{const t=Math.min(1,(now-start)/500);el.textContent=format(from+(value-from)*(1-Math.pow(1-t,3)));if(t<1)el._animation=requestAnimationFrame(frame);else el.textContent=target};
+  el._animation=requestAnimationFrame(frame);
+}
+
+function renderCharts() {
+  if(!$('charts').children.length)$('charts').innerHTML=['dev','test'].map(part=>`<div class="chart-group"><h3>${part==='dev'?'DEVELOPMENT · used for prompt improvement':'HELD OUT · never sent to the improver'}</h3>${['baseline','candidate'].map((kind,i)=>{const key=kind+'_'+part;return `<div class="barrow"><span>${i?'Candidate':'Baseline'}</span><div class="track"><div id="bar-${key}" class="bar" style="width:0;background:var(--${i?'green':'blue'})"></div></div><strong id="value-${key}">—</strong></div>`}).join('')}<div class="axis"><span>0%</span><span>50%</span><span>100%</span></div></div>`).join('');
+  for(const key of ['baseline_dev','candidate_dev','baseline_test','candidate_test']){
+    const x=state.results[key],bar=$('bar-'+key);bar.style.width=(x?.accuracy||0)+'%';
+    bar.classList.toggle('active',state.stage===key&&state.status==='running'&&(!playback||!playback.paused));
+    $('value-'+key).innerHTML=`${pct(x)} ${x?`<span class="neutral">(${x.completed}/${x.total})</span>`:''}`;
+  }
+  const x=state.results[state.stage],rows=x?.rows||[];
+  $('trace-label').textContent=x?`${names[stages.indexOf(state.stage)]} · cumulative accuracy`:'Accuracy trace appears as claims finish';
+  $('trace-count').textContent=x?`${rows.length}/${x.total} claims`:'';
+  let correct=0;const points=rows.map((row,i)=>{correct+=row.correct?1:0;return `${8+(i+1)/x.total*464},${68-60*correct/(i+1)}`});
+  const end=points.at(-1)?.split(',');
+  $('trace').innerHTML='<path class="trace-grid" d="M8 8H472 M8 38H472 M8 68H472"/>'+ (points.length?`<polyline points="${points.join(' ')}"/><circle cx="${end[0]}" cy="${end[1]}" r="4"/>`:'');
+}
+
+function renderDiff() {
+  const key=JSON.stringify([state.baseline_prompt,state.candidate_prompt]);if(key===lastPrompt)return;lastPrompt=key;
+  $('diff-version').textContent=state.baseline_version?`Baseline · v${state.baseline_version}`:'Baseline';
+  if(!state.candidate_prompt){$('before').textContent=state.baseline_prompt||'The baseline prompt appears when a run starts.';$('after').textContent='The candidate prompt appears after the learning step.';$('diff-count').textContent='Awaiting candidate';return}
+  const chunks=diffWords(state.baseline_prompt||'',state.candidate_prompt);
+  const side=(exclude,tag,type)=>chunks.filter(x=>x.type!==exclude).map(x=>x.type===type?`<${tag}>${esc(x.text)}</${tag}>`:esc(x.text)).join('');
+  $('before').innerHTML=side('added','del','removed');$('after').innerHTML=side('removed','ins','added');
+  const words=type=>chunks.filter(x=>x.type===type).reduce((n,x)=>n+(x.text.match(/\S+/g)||[]).length,0);
+  $('diff-count').innerHTML=`<span class="good">+${words('added')} added</span> · <span class="bad">−${words('removed')} removed</span>`;
+  $('after').classList.remove('ready');void $('after').offsetWidth;$('after').classList.add('ready');
+}
+
+function render() {
+  if(!state)return;
+  const s=state,r=s.results||{},running=s.status==='running',idx=stages.indexOf(s.stage),replaying=!!playback;
+  document.body.classList.toggle('replaying',replaying);
+  $('status').className=`badge ${replaying?'replay':running?'running':''}`;
+  $('status').innerHTML=`<i class="dot"></i>${esc(replaying?(playback.index===playback.frames.length-1?'Replay complete':playback.paused?'Replay · paused':'Saved replay'):s.status==='idle'?'Ready':s.status)}`;
+  $('start').disabled=replaying||running||busy;$('start').textContent=s.id?'Start new experiment':'Start experiment';
+  $('stop').hidden=replaying||!running;$('stop').disabled=busy;$('export').disabled=!s.id;
+  $('replay').disabled=replaying||busy||latest?.status!=='complete';$('replay').className=latest?.status==='complete'?'primary':'';
+  $('start').className=latest?.status==='complete'?'':'primary';$('replay-controls').hidden=!replaying;
+  if(replaying){$('scrub').max=playback.frames.length-1;$('scrub').value=playback.index;$('replay-position').textContent=`${playback.index+1}/${playback.frames.length} steps`;$('pause').textContent=playback.index===playback.frames.length-1?'Play again':playback.paused?'Play':'Pause'}
+  $('steps').innerHTML=stages.map((key,i)=>{const result=r[key],done=full(result)||(key==='improve'&&s.candidate_prompt),active=running&&key===s.stage;return `<div class="step ${active?'current':done?'done':''}"><span>0${i+1} ${done?'✓':''}</span><b>${names[i]}</b><small>${result?`${result.completed}/${result.total} scored`:active?'In progress…':subtitles[i]}</small><i class="fill" style="width:${result?100*result.completed/result.total:done?100:0}%"></i></div>`}).join('');
+  const current=r[s.stage],fraction=current?current.completed/current.total:s.candidate_prompt?1:0;
+  $('flow-progress').style.width=(s.status==='complete'?100:Math.max(0,(idx+fraction)/stages.length*100))+'%';
+  for(const [id,key] of [['base','baseline_test'],['candidate','candidate_test']]){const x=r[key];animateScore(id+'-score',x?.accuracy);$(id+'-detail').textContent=x?`${x.correct}/${x.completed} correct${full(x)?' · final':' · provisional'}`:'Awaiting evaluation'}
+  const a=r.baseline_test,b=r.candidate_test;
+  if(full(a)&&full(b)){const d=b.accuracy-a.accuracy;animateScore('delta',d,' pp');$('delta').className=d>0?'good':d<0?'bad':'neutral';$('delta-detail').textContent=`${b.correct-a.correct>0?'+':''}${b.correct-a.correct} correct claims out of ${a.total}`}else{animateScore('delta',null);$('delta').className='';$('delta-detail').textContent='Measured after both complete'}
+  $('elapsed-label').textContent=replaying?'Recorded run time':'Run time';
+  $('usage').textContent=replaying&&s.calls==null?'Recorded usage shown at replay end':`${s.calls||0} LLM calls · ${(s.tokens||0).toLocaleString()} tokens`;
+  $('runtime').textContent=s.model?`${s.model.split('/').pop()} · baseline v${s.baseline_version}`:'One prompt revision';
+  renderCharts();renderDiff();
+  $('diagnosis').textContent=s.diagnosis||'Waiting for the baseline. The agent will diagnose mistakes and propose one general prompt change.';
+  $('log').innerHTML=s.events?.length?s.events.slice().reverse().map(e=>`<div><time>${new Date(e.time*1000).toLocaleTimeString()}</time>${esc(e.message)}</div>`).join(''):'<div>No recorded events at this point.</div>';
+  $('notice').className='notice'+(['failed','interrupted'].includes(s.status)?' error':'');
+  $('notice').textContent=replaying?'Saved replay · paced playback of real results. No inference requests are made.':s.outcome||s.message||(running?`${names[idx]} — results update live. You can leave this page and return without losing progress.`:s.status==='failed'?`Experiment failed (${s.error}). Partial results are retained.`:s.status==='stopped'?'Stopped. Partial results are retained.':'Ready to measure. Start a live experiment, or replay the saved run for your demo.');
+  $('spotlight').classList.toggle('moving',running&&(!replaying||!playback.paused));
+  $('focus-title').textContent=s.status==='complete'?'Comparison complete':running?names[idx]:'Ready for the next experiment';
+  const last=current?.rows.at(-1);
+  $('focus-subtitle').textContent=s.stage==='improve'?(s.candidate_prompt?'New judge instructions are ready — inspect the diff below.':'Finding a general lesson in development mistakes…'):current?`${current.completed} of ${current.total} verdicts scored against independent labels.`:'Follow each stage from baseline to held-out comparison.';
+  $('last-claim').textContent=last?`${last.correct?'✓':'×'} ${last.claim}`:'';
+  renderClaims();tick();
+}
+function renderClaims(){if(!state)return;const opened=new Set([...document.querySelectorAll('#claims details[open]')].map(e=>e.dataset.id));const r=state.results||{},base=new Map((r['baseline_'+split]?.rows||[]).map(x=>[x.id,x])),cand=new Map((r['candidate_'+split]?.rows||[]).map(x=>[x.id,x]));const tag=x=>!x?'<span class="neutral">Pending</span>':`<span class="tag ${x.correct?'good':'bad'}">${esc(x.error?'API error':x.verdict||'Invalid')} ${x.correct?'✓':'×'}</span>`;
+const rows=state.items.filter(x=>x.split===split).filter(x=>{const a=base.get(x.id),b=cand.get(x.id),f=$('filter').value;return f==='all'||f==='fixed'&&a&&!a.correct&&b?.correct||f==='regressed'&&a?.correct&&b&&!b.correct||f==='errors'&&(a?.error||b?.error)});
+$('claims').innerHTML=rows.map(x=>{const a=base.get(x.id),b=cand.get(x.id);let change='—',cls='neutral';if(a&&b){change=a.correct===b.correct?'Unchanged':b.correct?'Fixed ↗':'Regressed ↘';cls=a.correct===b.correct?'neutral':b.correct?'good':'bad'}return `<tr><td>${esc(x.claim)}<details class="evidence" data-id="${esc(x.id)}" ${opened.has(x.id)?'open':''}><summary>Evidence & explanations</summary>${x.evidence.map(e=>`<p><a href="https://en.wikipedia.org/wiki/${encodeURIComponent(e[0].replaceAll('-LRB-','(').replaceAll('-RRB-',')').replaceAll('-COLON-',':'))}" target="_blank" rel="noopener">${esc(e[0].replaceAll('_',' '))}</a><br>${esc(e[2])}</p>`).join('')}<p>Baseline: ${esc(a?.explanation||'Pending')}</p><p>Candidate: ${esc(b?.explanation||'Pending')}</p></details></td><td><span class="tag">${esc(x.label==='NOT ENOUGH INFO'?'Not enough info':x.label==='SUPPORTS'?'Supported':'Refuted')}</span></td><td>${tag(a)}</td><td>${tag(b)}</td><td class="${cls}">${change}</td></tr>`}).join('')||'<tr><td colspan="5" class="empty">No claims match this filter yet.</td></tr>';
+$('dev-tab').className=split==='dev'?'selected':'';$('test-tab').className=split==='test'?'selected':'';}
+function tick(){if(!state?.started){$('elapsed').textContent='0:00';return}const record=playback?.saved||state;const sec=Math.max(0,Math.floor((record.ended||Date.now()/1000)-record.started));$('elapsed').textContent=`${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`}
+function showReplayFrame(index) {
+  if(!playback)return;
+  const prior=state?.stage;playback.index=Math.max(0,Math.min(index,playback.frames.length-1));state=playback.frames[playback.index];
+  if(state.stage!==prior)split=state.stage.endsWith('_test')?'test':'dev';
+  if(playback.index===playback.frames.length-1)playback.paused=true;
+  render();
+}
+function scheduleReplay(){
+  clearTimeout(replayTimer);if(!playback||playback.paused)return;
+  const delay=state.stage==='improve'?(state.candidate_prompt?4000:2000):full(state.results[state.stage])?1100:550;
+  replayTimer=setTimeout(()=>{if(!playback||playback.paused)return;showReplayFrame(playback.index+1);scheduleReplay()},delay/Number($('speed').value));
+}
+function beginReplay(){
+  if(latest?.status!=='complete'||busy)return;
+  const saved=structuredClone(latest),frames=replayFrames(saved);if(!frames.length)return;
+  playback={saved,frames,index:0,paused:false};split='dev';$('filter').value='all';showReplayFrame(0);scheduleReplay();
+}
+function exitReplay(){clearTimeout(replayTimer);playback=null;state=latest;render()}
+async function poll(){
+  try{const r=await fetch('/api/improvement');if(!r.ok)throw Error('Status unavailable');const next=await r.json();const changed=JSON.stringify(next)!==JSON.stringify(latest),reconnected=$('connection').textContent!=='● Connected';latest=next;$('connection').textContent='● Connected';if(!playback&&(changed||reconnected)){state=latest;render()}}
+  catch(e){$('connection').textContent=playback?'Offline · saved replay available':'Disconnected · retrying';$('start').disabled=true}
+  setTimeout(poll,1500);
+}
+async function action(name){
+  if(playback)return;
+  busy=true;render();
+  try{const r=await fetch('/api/improvement/'+name,{method:'POST'}),data=await r.json();if(!r.ok)throw Error(data.detail||'Request failed');latest=state=data;render()}
+  catch(e){$('notice').className='notice error';$('notice').textContent=e.message}
+  finally{busy=false;$('start').disabled=state?.status==='running';$('stop').disabled=false;$('replay').disabled=latest?.status!=='complete'}
+}
+$('start').onclick=()=>action('start');$('stop').onclick=()=>action('stop');$('replay').onclick=beginReplay;
+$('pause').onclick=()=>{if(!playback)return;if(playback.index===playback.frames.length-1){playback.paused=false;showReplayFrame(0)}else{playback.paused=!playback.paused;render()}scheduleReplay()};
+$('next').onclick=()=>{if(!playback)return;clearTimeout(replayTimer);playback.paused=true;showReplayFrame(playback.index+1)};
+$('scrub').oninput=()=>{if(!playback)return;clearTimeout(replayTimer);playback.paused=true;showReplayFrame(Number($('scrub').value))};
+$('speed').onchange=scheduleReplay;$('exit-replay').onclick=exitReplay;
+$('dev-tab').onclick=()=>{split='dev';renderClaims()};$('test-tab').onclick=()=>{split='test';renderClaims()};$('filter').onchange=renderClaims;
+$('export').onclick=()=>{const record=playback?.saved||state,url=URL.createObjectURL(new Blob([JSON.stringify(record,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=`fever-experiment-${record.id}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+setInterval(tick,1000);poll();
+
+</script>
+</body></html>

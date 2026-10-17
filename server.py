@@ -8,6 +8,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
+from eval.fever_fast import Experiment
 from factcheck.cli import SAMPLE_TEXT
 from factcheck.articles import fetch_article
 from factcheck.config import Config
@@ -15,6 +16,7 @@ from factcheck.orchestrator import Mission
 
 app = FastAPI(title="Done Means Done: fact-check agent team")
 RUNS = Path("runs")
+experiment = Experiment()
 
 
 class RunRequest(BaseModel):
@@ -96,3 +98,28 @@ async def run(req: RunRequest):
         await task
 
     return StreamingResponse(stream(), media_type="text/event-stream")
+
+
+@app.get("/improvement")
+def improvement_page():
+    return FileResponse("static/improvement.html")
+
+
+@app.get("/api/improvement")
+def improvement_status():
+    return experiment.snapshot()
+
+
+@app.post("/api/improvement/start")
+async def improvement_start():
+    try:
+        experiment.start()
+    except ValueError as exc:
+        raise HTTPException(409 if experiment.task and not experiment.task.done() else 400, str(exc)) from None
+    return experiment.snapshot()
+
+
+@app.post("/api/improvement/stop")
+async def improvement_stop():
+    await experiment.stop()
+    return experiment.snapshot()

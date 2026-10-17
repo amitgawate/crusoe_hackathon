@@ -1,0 +1,482 @@
+{
+  "metadata": {
+    "name": "FEVER \u00b7 gold evidence",
+    "source": "https://huggingface.co/datasets/copenlu/fever_gold_evidence",
+    "original_source": "https://fever.ai/dataset/fever.html",
+    "source_split": "validation",
+    "source_window": "First 100 rows; deterministic SHA-256 order, selected before evaluation",
+    "retrieved": "2026-10-17",
+    "raw_sha256": "86de37d96349bed6b0dd656d1cece202a045b182cdcb2bd449666b98e51ac916",
+    "licenses": [
+      "CC-BY-SA-3.0",
+      "GPL-3.0 (dataset repository metadata)"
+    ],
+    "sampling": "5 per label per split; no repeated original claim IDs or shared evidence pages",
+    "size": 30,
+    "dev": 15,
+    "test": 15,
+    "scope": "Judge-only label accuracy using supplied evidence. Not full-pipeline FEVER score."
+  },
+  "items": [
+    {
+      "claim": "Bradley Fuller partnered with Andrew Form.",
+      "label": "SUPPORTS",
+      "evidence": [
+        [
+          "Bradley_Fuller",
+          "1",
+          "He co-owns Platinum Dunes , partnering with both Michael Bay and Andrew Form ."
+        ]
+      ],
+      "id": "772606db420ef152b4c16aa9f1b659a9",
+      "verifiable": "VERIFIABLE",
+      "original_id": 185289,
+      "split": "dev"
+    },
+    {
+      "claim": "Asylum Records is a record label founded in 1971.",
+      "label": "SUPPORTS",
+      "evidence": [
+        [
+          "Asylum_Records",
+          "0",
+          "Asylum Records is an American record label founded in 1971 by David Geffen and partner Elliot Roberts ."
+        ]
+      ],
+      "id": "55659ad094f28917ff9ddd66ff92b80a",
+      "verifiable": "VERIFIABLE",
+      "original_id": 186591,
+      "split": "dev"
+    },
+    {
+      "claim": "Eva Green had a career in film.",
+      "label": "SUPPORTS",
+      "evidence": [
+        [
+          "Eva_Green",
+          "1",
+          "She started her career in theatre before making her film debut in 2003 in Bernardo Bertolucci 's film The Dreamers ."
+        ]
+      ],
+      "id": "f5ef0b89b1a7b6cb075ec38477826bd9",
+      "verifiable": "VERIFIABLE",
+      "original_id": 79911,
+      "split": "dev"
+    },
+    {
+      "claim": "Hush (2016 film) was produced.",
+      "label": "SUPPORTS",
+      "evidence": [
+        [
+          "Hush_-LRB-2016_film-RRB-",
+          "2",
+          "The film was produced by Trevor Macy , through Intrepid Pictures , and Jason Blum through his Blumhouse Productions banner ."
+        ]
+      ],
+      "id": "56701244cd5e29e1fccaf69e54516549",
+      "verifiable": "VERIFIABLE",
+      "original_id": 148167,
+      "split": "dev"
+    },
+    {
+      "claim": "Liam Neeson received nominations for three Golden Globe Awards.",
+      "label": "SUPPORTS",
+      "evidence": [
+        [
+          "Liam_Neeson",
+          "11",
+          "He has been nominated for a number of awards , including an Academy Award for Best Actor , a BAFTA Award for Best Actor in a Leading Role and three Golden Globe Awards for Best Actor in a Motion Picture Drama ."
+        ]
+      ],
+      "id": "5e33a618bbdc93ef4b36463768d2023b",
+      "verifiable": "VERIFIABLE",
+      "original_id": 130501,
+      "split": "dev"
+    },
+    {
+      "claim": "Match Point explores exclusively the theme of love.",
+      "label": "REFUTES",
+      "evidence": [
+        [
+          "Match_Point",
+          "2",
+          "The film treats themes of morality , greed , and the roles of lust , money , and luck in life , leading many to compare it to Allen 's earlier film Crimes and Misdemeanors -LRB- 1989 -RRB- ."
+        ]
+      ],
+      "id": "b8d7b254e312932dc34b0c1ff9ba2512",
+      "verifiable": "VERIFIABLE",
+      "original_id": 62359,
+      "split": "dev"
+    },
+    {
+      "claim": "Emma Watson was killed in 1990.",
+      "label": "REFUTES",
+      "evidence": [
+        [
+          "Emma_Watson",
+          "15",
+          "She was honoured by the British Academy of Film and Television Arts in 2014 , winning for British Artist of the Year ."
+        ]
+      ],
+      "id": "db69bf491ec7bb3f0b59a7961da2ad73",
+      "verifiable": "VERIFIABLE",
+      "original_id": 10158,
+      "split": "dev"
+    },
+    {
+      "claim": "Tatum O'Neal spent her whole life single.",
+      "label": "REFUTES",
+      "evidence": [
+        [
+          "Tatum_O'Neal",
+          "6",
+          "In 1986 , O'Neal married professional tennis player John McEnroe , with whom she had three children ."
+        ]
+      ],
+      "id": "58e8437d406e328b56ab3841823c3a2f",
+      "verifiable": "VERIFIABLE",
+      "original_id": 59067,
+      "split": "dev"
+    },
+    {
+      "claim": "Fred Armisen is a frog.",
+      "label": "REFUTES",
+      "evidence": [
+        [
+          "Fred_Armisen",
+          "2",
+          "With his comedy partner Carrie Brownstein , Armisen is the co-creator and co-star of the IFC sketch comedy series Portlandia ."
+        ]
+      ],
+      "id": "c961dc293849798e100ae369a788701a",
+      "verifiable": "VERIFIABLE",
+      "original_id": 80909,
+      "split": "dev"
+    },
+    {
+      "claim": "Shawn Carlson is a squid.",
+      "label": "REFUTES",
+      "evidence": [
+        [
+          "Shawn_Carlson",
+          "0",
+          "Shawn Carlson -LRB- born 1960 -RRB- is an American physicist , science writer , and a STEM educator ."
+        ]
+      ],
+      "id": "2c7cc35290c8d5ba84f04e80f862ce01",
+      "verifiable": "VERIFIABLE",
+      "original_id": 28517,
+      "split": "dev"
+    },
+    {
+      "claim": "Winter's Tale is a 1983 romance novel.",
+      "label": "NOT ENOUGH INFO",
+      "evidence": [
+        [
+          "Winter",
+          "0",
+          "Winter is the coldest season of the year in polar and temperate climates , between autumn and spring ."
+        ]
+      ],
+      "id": "f10eb246976423f7adf5526acfa64038",
+      "verifiable": "NOT VERIFIABLE",
+      "original_id": 57483,
+      "split": "dev"
+    },
+    {
+      "claim": "Ludwig van Beethoven was born in 1787.",
+      "label": "NOT ENOUGH INFO",
+      "evidence": [
+        [
+          "Ludwig_van_Beethoven",
+          "5",
+          "Born in Bonn , then the capital of the Electorate of Cologne and part of the Holy Roman Empire , Beethoven displayed his musical talents at an early age and was taught by his father Johann van Beethoven and by composer and conductor Christian Gottlob Neefe ."
+        ]
+      ],
+      "id": "95bcef60842dc24a2d9b18ae25020303",
+      "verifiable": "NOT VERIFIABLE",
+      "original_id": 223665,
+      "split": "dev"
+    },
+    {
+      "claim": "Eric Church has written over 100 songs.",
+      "label": "NOT ENOUGH INFO",
+      "evidence": [
+        [
+          "Luke_Laird",
+          "3",
+          "He has also written and produced songs for Tim McGraw , Rascal Flatts , Kacey Musgraves , Toby Keith , Ne-Yo , John Legend , Jason Aldean , Miranda Lambert , Darius Rucker , and many others ."
+        ]
+      ],
+      "id": "2ab70646fffa23b2c2546796d6d85fd3",
+      "verifiable": "NOT VERIFIABLE",
+      "original_id": 42459,
+      "split": "dev"
+    },
+    {
+      "claim": "Vedam stars Deeksha Seth in the role of Darth Maul.",
+      "label": "NOT ENOUGH INFO",
+      "evidence": [
+        [
+          "Deeksha_Seth",
+          "0",
+          "Deeksha Seth -LRB- born 14 February 1990 -RRB- is an Indian film actress and model ."
+        ]
+      ],
+      "id": "c1bc8f375841647c5521769ab8f8bf52",
+      "verifiable": "NOT VERIFIABLE",
+      "original_id": 89915,
+      "split": "dev"
+    },
+    {
+      "claim": "Steve Ditko grew up in New York City.",
+      "label": "NOT ENOUGH INFO",
+      "evidence": [
+        [
+          "Steve_Ditko",
+          "3",
+          "Ditko studied under Batman artist Jerry Robinson at the Cartoonist and Illustrators School in New York City ."
+        ]
+      ],
+      "id": "be45303261945279f17b1d81d95d40af",
+      "verifiable": "NOT VERIFIABLE",
+      "original_id": 179027,
+      "split": "dev"
+    },
+    {
+      "claim": "Fist of Legend is a remake of a film.",
+      "label": "SUPPORTS",
+      "evidence": [
+        [
+          "Fist_of_Legend",
+          "2",
+          "It is a remake of the 1972 Fist of Fury , which starred Bruce Lee as the lead character ."
+        ],
+        [
+          "Fist_of_Fury",
+          "0",
+          "Fist of Fury is a 1972 Hong Kong martial arts film directed by Lo Wei , starring Bruce Lee in his second major role after The Big Boss -LRB- 1971 -RRB- ."
+        ]
+      ],
+      "id": "c54ca9623d1faf64622629d5f3310ad0",
+      "verifiable": "VERIFIABLE",
+      "original_id": 10947,
+      "split": "test"
+    },
+    {
+      "claim": "Premam had a theatrical run in Kerala.",
+      "label": "SUPPORTS",
+      "evidence": [
+        [
+          "Premam",
+          "11",
+          "The film had a theatrical run of 151 days in Kerala and 259 days in Chennai , Tamil Nadu ."
+        ]
+      ],
+      "id": "820fe520487c2e653069ed3c4009f625",
+      "verifiable": "VERIFIABLE",
+      "original_id": 184430,
+      "split": "test"
+    },
+    {
+      "claim": "The Sterile Cuckoo was adapted from a novel written by an American novelist.",
+      "label": "SUPPORTS",
+      "evidence": [
+        [
+          "The_Sterile_Cuckoo",
+          "3",
+          "The movie was adapted by Alvin Sargent from the 1965 novel by John Nichols , and directed by Alan J. Pakula , in his directing debut ."
+        ],
+        [
+          "John_Nichols_-LRB-writer-RRB-",
+          "0",
+          "John Treadwell Nichols -LRB- born July 23 , 1940 , Berkeley , California -RRB- is an American novelist ."
+        ]
+      ],
+      "id": "1da9e8db12cf45cee20806629a501d60",
+      "verifiable": "VERIFIABLE",
+      "original_id": 187777,
+      "split": "test"
+    },
+    {
+      "claim": "Star Trek: Discovery is a series.",
+      "label": "SUPPORTS",
+      "evidence": [
+        [
+          "Star_Trek-COLON-_Discovery",
+          "1",
+          "It is the first series developed specifically for that service , and the first Star Trek series since Star Trek : Enterprise concluded in 2005 ."
+        ]
+      ],
+      "id": "d40cc4c48ca9e164972acc2a56c588f6",
+      "verifiable": "VERIFIABLE",
+      "original_id": 139037,
+      "split": "test"
+    },
+    {
+      "claim": "The Residenztheater is where Hedda Gabler's world premiere took place.",
+      "label": "SUPPORTS",
+      "evidence": [
+        [
+          "Hedda_Gabler",
+          "1",
+          "Ibsen was present at the world premiere , which took place on 31 January 1891 at the Residenztheater in Munich ."
+        ]
+      ],
+      "id": "04a2b117a34c775d23a3a6986a7f4e76",
+      "verifiable": "VERIFIABLE",
+      "original_id": 122692,
+      "split": "test"
+    },
+    {
+      "claim": "Saxony is the tenth smallest German state.",
+      "label": "REFUTES",
+      "evidence": [
+        [
+          "Saxony",
+          "4",
+          "Saxony is the tenth largest of Germany 's sixteen states , with an area of 18,413 km2 , and the sixth most populous , with 4 million people ."
+        ]
+      ],
+      "id": "5c7e653c80d45b15031a1b43f5ec87d3",
+      "verifiable": "VERIFIABLE",
+      "original_id": 80054,
+      "split": "test"
+    },
+    {
+      "claim": "Graffiti was released in 2005.",
+      "label": "REFUTES",
+      "evidence": [
+        [
+          "Graffiti_-LRB-Chris_Brown_album-RRB-",
+          "3",
+          "Recording sessions took place from 2008 to 2009 , with these several record producers , including Polow da Don , Swizz Beatz , The Runners and Brian Kennedy , among others ."
+        ]
+      ],
+      "id": "a57dfb56ef805c6cd25d8a80b36ad02b",
+      "verifiable": "VERIFIABLE",
+      "original_id": 195370,
+      "split": "test"
+    },
+    {
+      "claim": "Recovery is an Eminem song.",
+      "label": "REFUTES",
+      "evidence": [
+        [
+          "Recovery_-LRB-Eminem_album-RRB-",
+          "8",
+          "To promote the album , he performed the album 's songs live on televised shows , at award ceremonies , musical events and also headed The Recovery Tour ."
+        ]
+      ],
+      "id": "e37c518766da14e37e2e6863defa8ce4",
+      "verifiable": "VERIFIABLE",
+      "original_id": 62298,
+      "split": "test"
+    },
+    {
+      "claim": "Andrew Kevin Walker is only a dancer.",
+      "label": "REFUTES",
+      "evidence": [
+        [
+          "Andrew_Kevin_Walker",
+          "1",
+          "He is known for having written Seven -LRB- 1995 -RRB- , for which he earned a nomination for the BAFTA Award for Best Original Screenplay , as well as several other films , including 8mm -LRB- 1999 -RRB- , Sleepy Hollow -LRB- 1999 -RRB- and many uncredited script rewrites ."
+        ]
+      ],
+      "id": "b2824dc61510b884d9b7f1c49a1e3133",
+      "verifiable": "VERIFIABLE",
+      "original_id": 87486,
+      "split": "test"
+    },
+    {
+      "claim": "The CONCACAF Champions League is organized for the top baseball clubs.",
+      "label": "REFUTES",
+      "evidence": [
+        [
+          "CONCACAF_Champions_League",
+          "0",
+          "The CONCACAF Champions League is an annual continental football club competition organized by CONCACAF for the top football clubs in North America , Central America and the Caribbean ."
+        ]
+      ],
+      "id": "82caf51ce8a246f1b5244cc1fd8ca9d4",
+      "verifiable": "VERIFIABLE",
+      "original_id": 37715,
+      "split": "test"
+    },
+    {
+      "claim": "Sayyeshaa made her Hollywood debut in Shivaay.",
+      "label": "NOT ENOUGH INFO",
+      "evidence": [
+        [
+          "Sayyeshaa",
+          "0",
+          "Sayyeshaa is an Indian film actress who appears in Hindi , Tamil and Telugu films ."
+        ]
+      ],
+      "id": "c07e0d3807241c8f77304361b5431734",
+      "verifiable": "NOT VERIFIABLE",
+      "original_id": 7162,
+      "split": "test"
+    },
+    {
+      "claim": "Uranium-235 was discovered by a governor who was born in August.",
+      "label": "NOT ENOUGH INFO",
+      "evidence": [
+        [
+          "Uranium-235",
+          "6",
+          "It was discovered in 1935 by Arthur Jeffrey Dempster ."
+        ]
+      ],
+      "id": "1a53b12e48b4d391f08abab5e7966083",
+      "verifiable": "NOT VERIFIABLE",
+      "original_id": 68044,
+      "split": "test"
+    },
+    {
+      "claim": "Ashton Kutcher was directed by the government.",
+      "label": "NOT ENOUGH INFO",
+      "evidence": [
+        [
+          "Ashton_Kutcher",
+          "0",
+          "Christopher Ashton Kutcher -LRB- -LSB- \u02c8k\u028at\u0283\u0259r -RSB- born February 7 , 1978 -RRB- is an American actor and investor ."
+        ]
+      ],
+      "id": "4eb28b2a0af18acab7c6f1b5bd112f91",
+      "verifiable": "NOT VERIFIABLE",
+      "original_id": 130277,
+      "split": "test"
+    },
+    {
+      "claim": "Harvard University is a liberal arts university.",
+      "label": "NOT ENOUGH INFO",
+      "evidence": [
+        [
+          "College_of_Liberal_Arts",
+          "9",
+          "Korea University College of Liberal Arts"
+        ]
+      ],
+      "id": "794bc1132aec65499f3e0b8153d7b7af",
+      "verifiable": "NOT VERIFIABLE",
+      "original_id": 130638,
+      "split": "test"
+    },
+    {
+      "claim": "The Eighth Doctor is on Doctor What.",
+      "label": "NOT ENOUGH INFO",
+      "evidence": [
+        [
+          "Eighth_Doctor",
+          "0",
+          "The Eighth Doctor is an incarnation of the Doctor , the protagonist of the BBC science fiction television series Doctor Who ."
+        ]
+      ],
+      "id": "eaa070a35654fb179b4cbd5e4fbcfc74",
+      "verifiable": "NOT VERIFIABLE",
+      "original_id": 193400,
+      "split": "test"
+    }
+  ]
+}
