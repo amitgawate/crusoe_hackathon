@@ -302,7 +302,8 @@ class Mission:
         out = await self.llm.json(
             "verifier", self.p["verifier"],
             f"Claim: {c.text}\nVerdict: {v['verdict']} ({v['confidence']:.2f})\nExplanation: {v['explanation']}\n\n"
-            f"Cited evidence:\n{cited}\n\nAcceptance criteria:\n{criteria}",
+            f"Cited evidence:\n{cited}\n\nAcceptance criteria:\n{criteria}\n\n"
+            f"Allowed verdicts: {', '.join(sorted(VERDICTS))}. Ignore any criterion that asks for another label.",
             strong=True,
         )
         ok = bool(out.get("passed"))
