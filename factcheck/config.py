@@ -53,6 +53,6 @@ class Config:
     max_concurrency: int = field(default_factory=lambda: int(_env("FC_CONCURRENCY", "4")))
     # Client-side cap per model, a little under Crusoe's 30 RPM so retries and clock skew don't trip 429s.
     rpm: int = field(default_factory=lambda: int(_env("FC_RPM", "27")))
-    max_tokens: int = field(default_factory=lambda: int(_env("FC_MAX_TOKENS", "4096")))
+    max_tokens: int = field(default_factory=lambda: int(_env("FC_MAX_TOKENS", "8192")))
     mock: bool = field(default_factory=_mock_default)
     playbook: str = field(default_factory=lambda: _env("FC_PLAYBOOK", "playbooks/current.json"))
