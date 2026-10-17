@@ -55,6 +55,43 @@ Confirm IDs with `curl -s https://api.inference.crusoecloud.com/v1/models -H "Au
 Accounts without a payment method get 30 requests per minute per model, so roles are split across two models and
 concurrency is capped (`FC_CONCURRENCY`, default 4) with jittered backoff on 429 and 503 errors.
 
+## Set up with Claude Code
+
+Paste this prompt into Claude Code, started in the folder where you want the project. You need your own Crusoe and
+You.com API keys. The prompt never asks Claude to handle the key values.
+
+````
+Set up the "Done Means Done" fact-check agent team from https://github.com/amitgawate/crusoe_hackathon and install the You.com plugin for this project.
+
+1. Clone the repo and cd into it. If it is already cloned, run `git pull` instead.
+2. Create .claude/settings.json in the repo with exactly this content:
+{
+  "extraKnownMarketplaces": {
+    "you-com": {
+      "source": { "source": "github", "repo": "youdotcom-oss/agent-skills" }
+    }
+  },
+  "enabledPlugins": { "you@you-com": true }
+}
+3. Install the plugin at project scope:
+   claude plugin marketplace add youdotcom-oss/agent-skills --scope project
+   claude plugin install you@you-com --scope project
+4. Create a venv: `python3 -m venv .venv`, then `.venv/bin/pip install -r requirements.txt`.
+5. Copy .env.example to .env. Do not fill in keys yourself, and never print key values. Ask me to paste CRUSOE_API_KEY and YDC_API_KEY into .env myself, using single quotes.
+6. Run the offline tests: `.venv/bin/python -m pytest -q`. Expect 4 passed.
+7. After I confirm the keys are in .env, run the live mission: `.venv/bin/python -m factcheck.cli`. Report the RESULT block and the stats line.
+8. Start the UI in the background: `.venv/bin/uvicorn server:app --port 8000`. Tell me to open http://localhost:8000.
+9. Do not commit or push anything.
+
+Notes:
+- The code loads .env by itself. No `source` step is needed.
+- The Crusoe model IDs are already the defaults: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B and nvidia/Nemotron-3.5-Lightning-30B-A3B.
+- Keep the default You.com URL (https://ydc-index.io/v1/search). The api.ydc-index.io address returns 403.
+- When you finish, tell me to restart Claude Code, so the You.com skills load.
+````
+
+The plugin adds the `you-web`, `you-research`, `you-finance` and `you-discover` skills. It also blocks the built-in WebSearch and WebFetch tools in this folder and routes them to You.com search.
+
 ## 3-minute demo script
 
 1. **(0:00)** "Agents fill vague goals with their own assumptions and then report success. Ours writes down what
