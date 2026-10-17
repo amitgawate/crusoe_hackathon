@@ -53,8 +53,32 @@
   #banner.err { display: block; background: rgba(248,81,73,.12); border: 1px solid var(--red); }
 
   /* claim cards */
-  #claims { display: grid; grid-template-columns: repeat(auto-fill, minmax(460px, 1fr)); gap: 16px; align-content: start; }
-  @media (max-width: 560px) { #claims { grid-template-columns: 1fr; } }
+  #claims { display: grid; grid-template-columns: 1fr; gap: 16px; align-content: start; }
+  .card-body { display: grid; grid-template-columns: minmax(0, 1fr) 330px; }
+  .card-main { min-width: 0; display: flex; flex-direction: column; }
+  .card-flow { border-left: 1px solid var(--line); padding: 10px 12px; background: rgba(0,0,0,.14); border-radius: 0 0 12px 0; }
+  @media (max-width: 1100px) { .card-body { grid-template-columns: 1fr; } .card-flow { border-left: 0; border-top: 1px solid var(--line); border-radius: 0 0 12px 12px; } .card-flow svg { max-width: 360px; margin: 0 auto; } }
+  .flow-title { font-size: 11px; font-weight: 800; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+  .flow-now { font-size: 12px; color: var(--blue); min-height: 2.8em; margin: 2px 0 4px; }
+  .card-flow svg { width: 100%; height: auto; display: block; }
+  .fn rect { fill: var(--panel2); stroke: var(--line); stroke-width: 1.5; transition: stroke .3s, fill .3s; }
+  .fn text.l { fill: var(--muted); font: 700 12px ui-sans-serif, system-ui, sans-serif; }
+  .fn text.s { fill: var(--muted); font: 9.5px ui-sans-serif, system-ui, sans-serif; }
+  .fn text.c { fill: var(--amber); font: 800 10px ui-sans-serif, system-ui, sans-serif; }
+  .fn.visited rect { stroke: #4a5a70; } .fn.visited text.l { fill: var(--text); }
+  .fn.pass rect { stroke: var(--green); } .fn.fail rect { stroke: var(--red); }
+  .fn.active rect { stroke: var(--blue); fill: rgba(88,166,255,.16); animation: fpulse 1.1s ease-in-out infinite; }
+  .fn.active text.l { fill: #fff; }
+  @keyframes fpulse { 50% { stroke-width: 4; } }
+  .fn.t-done.active rect { stroke: var(--green); fill: rgba(63,185,80,.22); animation: none; stroke-width: 3; }
+  .fn.t-escalated.active rect { stroke: var(--amber); fill: rgba(210,153,34,.22); animation: none; stroke-width: 3; }
+  .fn.t-unverifiable.active rect { stroke: var(--muted); fill: rgba(139,152,168,.2); animation: none; stroke-width: 3; }
+  .fe { fill: none; stroke: #2a3340; stroke-width: 1.6; marker-end: url(#fa-dim); }
+  .fe.taken { stroke: #5b6b80; marker-end: url(#fa-on); }
+  .fe.now { stroke: var(--blue); stroke-width: 2.4; stroke-dasharray: 5 4; animation: fdash .6s linear infinite; marker-end: url(#fa-now); }
+  .fe.now.bad { stroke: var(--red); marker-end: url(#fa-bad); }
+  @keyframes fdash { to { stroke-dashoffset: -9; } }
+  .el { fill: var(--muted); font: 9px ui-sans-serif, system-ui, sans-serif; }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; display: flex; flex-direction: column; position: relative; transition: border-color .4s, box-shadow .4s; }
   .card.done { border-color: var(--green); } .card.escalated { border-color: var(--amber); } .card.unverifiable { border-color: var(--muted); }
   .card.shake { animation: shake .4s; }
@@ -77,8 +101,7 @@
   .rnd { font-weight: 600; color: var(--muted); letter-spacing: 0; }
   .stance { font-size: 10px; padding: 1px 6px; border-radius: 999px; background: #0e1116; color: var(--muted); letter-spacing: .03em; }
   .stance.supports { color: var(--green); } .stance.refutes { color: var(--red); } .stance.concedes { color: var(--muted); }
-  .bubble { font-size: 13px; color: #c9d1d9; flex: 1; animation: pop .25s ease-out; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; overflow: hidden; cursor: help; }
-  .bubble:hover { -webkit-line-clamp: unset; }
+  .bubble { font-size: 13px; color: #c9d1d9; flex: 1; animation: pop .25s ease-out; max-height: 7.4em; overflow-y: auto; padding-right: 4px; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
   @keyframes pop { from { transform: translateY(6px) scale(.98); } to { transform: none; } }
   .meter { height: 4px; background: #0e1116; border-radius: 4px; overflow: hidden; }
   .meter i { display: block; height: 100%; width: 0; transition: width .6s ease-out; }
@@ -126,7 +149,7 @@
   .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 3px; vertical-align: middle; }
 
   /* verdict + stamps */
-  .verdict { display: none; gap: 14px; align-items: center; padding: 12px 14px; border-top: 1px solid var(--line); background: var(--panel2); border-radius: 0 0 12px 12px; }
+  .verdict { display: none; gap: 14px; align-items: center; padding: 12px 14px; border-top: 1px solid var(--line); background: var(--panel2); }
   .verdict.show { display: flex; }
   .stamp { display: inline-block; border: 4px solid currentColor; border-radius: 8px; padding: 4px 12px; font-weight: 900; font-size: 22px; letter-spacing: .08em; text-transform: uppercase; transform: rotate(-8deg); white-space: nowrap; animation: stamp-in .45s cubic-bezier(.2,1.3,.4,1); text-shadow: 0 0 1px currentColor; }
   @keyframes stamp-in { 0% { transform: scale(2) rotate(-16deg); opacity: 0; } 70% { transform: scale(.94) rotate(-7deg); opacity: 1; } 100% { transform: scale(1) rotate(-8deg); } }
@@ -153,6 +176,12 @@
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="fa-dim" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2a3340"/></marker>
+  <marker id="fa-on" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#5b6b80"/></marker>
+  <marker id="fa-now" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#58a6ff"/></marker>
+  <marker id="fa-bad" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#f85149"/></marker>
+</defs></svg>
 <header>
   <h1>Done Means Done</h1>
   <a href="/improvement" style="color:var(--teal);font-weight:600">Self-improvement ↗</a>
@@ -284,7 +313,7 @@ function sideHtml(cls, label, e, n) {
   const top = cls === "for"
     ? `${label} <span class="rnd">R${n}</span> <span class="stance ${esc(e.stance)}">${esc(e.stance || "?")}</span>`
     : `<span class="stance ${esc(e.stance)}">${esc(e.stance || "?")}</span> <span class="rnd">R${n}</span> ${label}`;
-  return `<div class="side-top">${top}</div><div class="bubble" title="${esc(e.text)}">${esc(e.text)}</div>
+  return `<div class="side-top">${top}</div><div class="bubble">${esc(e.text)}</div>
     <div class="meter"><i style="width:${Math.round((e.strength ?? 0.5) * 100)}%"></i></div>`;
 }
 
@@ -368,9 +397,113 @@ function renderVerdict(claim, v, status, reason) {
   if (v) moveJudge(claim, v);
 }
 
+// ---------- agent-loop flowchart (right column of each card) ----------
+const FLOW_NODES = [
+  ["research", 25, 16, 150, 38, "🔎 Researcher", "writes search queries"],
+  ["search", 25, 76, 150, 38, "You.com search", "adds new evidence"],
+  ["debate", 25, 136, 150, 38, "Advocate ⚔ Skeptic", "argue for and against"],
+  ["judge", 25, 196, 150, 38, "⚖ Judge", "verdict + citations"],
+  ["checks", 25, 256, 150, 38, "Code checks", "sources, domains, citations"],
+  ["verifier", 25, 316, 150, 38, "Verifier", "acceptance criteria"],
+  ["supervisor", 210, 236, 120, 46, "Supervisor", "decides next step"],
+  ["done", 8, 404, 100, 38, "DONE", "verified", "t-done"],
+  ["escalated", 118, 404, 104, 38, "HUMAN", "review", "t-escalated"],
+  ["unverifiable", 232, 404, 100, 38, "UNVERIFIABLE", "closed", "t-unverifiable"],
+];
+// [id, path, label, label x, label y, failure path?]
+const FLOW_EDGES = [
+  ["rs", "M100,54 V74"], ["sd", "M100,114 V134"], ["dj", "M100,174 V194"], ["jc", "M100,234 V254"],
+  ["sr", "M25,95 H12 V35 H23", "retry", 1, 68, true],
+  ["cv", "M100,294 V314", "pass", 106, 308],
+  ["cs", "M175,275 H190 V259 H208", "fail", 181, 270, true],
+  ["vs", "M175,335 H270 V284", "fail", 230, 331, true],
+  ["cont", "M240,236 V155 H177", "continue", 186, 150],
+  ["replan", "M300,236 V35 H177", "replan", 304, 140],
+  ["vd", "M70,354 V380 H58 V402", "pass", 74, 376],
+  ["ve", "M130,354 V380 H160 V402", "low conf.", 120, 394],
+  ["se", "M240,282 V390 H200 V402", "escalate", 244, 376],
+  ["su", "M305,282 V402", "stop", 309, 376, true],
+];
+const FLOW_SVG = `<svg viewBox="0 0 340 450" role="img" aria-label="Agent loop state">
+  ${FLOW_EDGES.map(([id, d, lab, lx, ly, bad]) => `<path class="fe${bad ? " badpath" : ""}" data-e="${id}" d="${d}"/>${lab ? `<text class="el" x="${lx}" y="${ly}">${lab}</text>` : ""}`).join("")}
+  ${FLOW_NODES.map(([id, x, y, w, h, l, sub, cls]) => `<g class="fn ${cls || ""}" data-n="${id}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="9"/>
+    <text class="l" x="${x + w / 2}" y="${y + h / 2 - 1}" text-anchor="middle">${l}</text>
+    <text class="s" x="${x + w / 2}" y="${y + h / 2 + 11}" text-anchor="middle">${sub}</text>
+    <text class="c" x="${x + w - 6}" y="${y + 11}" text-anchor="end"></text></g>`).join("")}
+</svg>`;
+
+function flowGo(claim, node, edge, now) {
+  const c = card(claim), st = claims[claim];
+  if (!c || !st) return;
+  const f = (st.flow ||= { cur: null, visits: {} });
+  c.querySelectorAll(".fn.active").forEach((n) => n.classList.remove("active"));
+  c.querySelectorAll(".fe.now").forEach((e) => e.classList.remove("now", "bad"));
+  if (edge) {
+    const e = c.querySelector(`[data-e="${edge}"]`);
+    if (e) { e.classList.add("taken", "now"); if (e.classList.contains("badpath")) e.classList.add("bad"); }
+  }
+  const n = c.querySelector(`[data-n="${node}"]`);
+  if (n) {
+    n.classList.add("visited", "active");
+    f.visits[node] = (f.visits[node] || 0) + 1;
+    n.querySelector("text.c").textContent = f.visits[node] > 1 ? `×${f.visits[node]}` : "";
+  }
+  f.cur = node;
+  if (now) c.querySelector(".flow-now").textContent = now;
+}
+function flowMark(claim, node, ok, sub) {
+  const n = q(claim, `[data-n="${node}"]`);
+  if (!n) return;
+  n.classList.toggle("pass", ok === true); n.classList.toggle("fail", ok === false);
+  if (sub) n.querySelector("text.s").textContent = sub;
+}
+function flowEdgeNow(claim, edge) {
+  const e = q(claim, `[data-e="${edge}"]`);
+  if (e) { e.classList.add("taken", "now"); if (e.classList.contains("badpath")) e.classList.add("bad"); }
+}
+
+function flowOnEvent(ev) {
+  const id = ev.claim, st = claims[id];
+  if (!id || !st) return;
+  const cur = st.flow?.cur;
+  if (ev.type === "agent" && ev.status === "thinking") {
+    const who = { researcher: "research", advocate: "debate", judge: "judge", verifier: "verifier" }[ev.agent];
+    if (!who) return;
+    const edge = { research: { search: "sr", supervisor: "replan" }, debate: { search: "sd", supervisor: "cont" },
+      judge: { debate: "dj" }, verifier: { checks: "cv" } }[who]?.[cur];
+    if (who === "verifier") flowMark(id, "checks", true);
+    flowGo(id, who, edge, `${ev.agent[0].toUpperCase() + ev.agent.slice(1)}: ${ev.text}`);
+  } else if (ev.type === "search") {
+    if (cur !== "search") flowGo(id, "search", "rs", `Searching You.com: “${ev.query}”`);
+    else q(id, ".flow-now").textContent = `Searching You.com: “${ev.query}”`;
+    if (!ev.error && ev.count === 0) flowMark(id, "search", false, "came back empty");
+    else if (!ev.error) flowMark(id, "search", true, "adds new evidence");
+  } else if (ev.type === "check") {
+    if (ev.name === "independent_verifier") {
+      flowMark(id, "verifier", ev.passed);
+      q(id, ".flow-now").textContent = `Verifier: ${ev.passed ? "passed" : "rejected"} the verdict`;
+    } else {
+      if (cur !== "checks") { flowMark(id, "checks", null); flowGo(id, "checks", "jc", "Running the definition-of-done checks in code"); }
+      if (!ev.passed) { flowMark(id, "checks", false); q(id, ".flow-now").textContent = `Code check failed: ${ev.name.replaceAll("_", " ")}`; }
+    }
+  } else if (ev.type === "decision") {
+    if (cur === "search" || cur === "research") {  // empty search: the loop retries research before any debate
+      flowEdgeNow(id, "sr"); q(id, ".flow-now").textContent = `Supervisor: ${ev.reason}`;
+      return;
+    }
+    flowGo(id, "supervisor", cur === "checks" ? "cs" : "vs", `Supervisor: ${ev.action.toUpperCase()} · ${ev.reason}`);
+    flowMark(id, "supervisor", null, ev.action);
+  } else if (ev.type === "claim_done") {
+    const from = st.flow?.cur;
+    const edge = ev.status === "done" ? "vd" : ev.status === "escalated" ? (from === "supervisor" ? "se" : "ve") : (from === "supervisor" ? "su" : null);
+    flowGo(id, ev.status, edge, `Closed: ${ev.status} · ${ev.reason}`);
+  }
+}
+
 // ---------- event handler (live and replay) ----------
 function handle(ev) {
   if (ev.t) { clock.evT = ev.t; clock.wall = Date.now(); }
+  if (ev.claim) flowOnEvent(ev);
   switch (ev.type) {
     case "mission_start":
       clock.t0 = ev.t; clock.running = true;
@@ -397,6 +530,7 @@ function handle(ev) {
         <div class="card" id="card-${esc(c.id)}">
           <div class="card-head"><span class="cid">${esc(c.id)}</span><span class="txt">${esc(c.text)}</span>
             ${c.high_stakes ? '<span class="pill stakes">high stakes</span>' : ""}<span class="pill state working">working</span></div>
+          <div class="card-body"><div class="card-main">
           <div class="stage">
             <div class="faceoff">
               <div class="side-col for"><div class="side-top">FOR</div><div class="dots">waiting for evidence</div></div>
@@ -416,6 +550,9 @@ function handle(ev) {
           </div>
           <div class="verdict"></div>
           <details class="log"><summary>Full log</summary><div class="feed"></div></details>
+          </div>
+          <div class="card-flow"><div class="flow-title">Agent loop</div><div class="flow-now">Waiting for the researcher…</div>${FLOW_SVG}</div>
+          </div>
         </div>`).join("");
       break;
     case "agent": {
