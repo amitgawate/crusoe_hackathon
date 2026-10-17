@@ -54,7 +54,7 @@
 
   /* claim cards */
   #claims { display: grid; grid-template-columns: 1fr; gap: 16px; align-content: start; }
-  .card-body { display: grid; grid-template-columns: minmax(0, 1fr) 330px; }
+  .card-body { display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
   .card-main { min-width: 0; display: flex; flex-direction: column; }
   .card-flow { border-left: 1px solid var(--line); padding: 10px 12px; background: rgba(0,0,0,.14); border-radius: 0 0 12px 0; }
   @media (max-width: 1100px) { .card-body { grid-template-columns: 1fr; } .card-flow { border-left: 0; border-top: 1px solid var(--line); border-radius: 0 0 12px 12px; } .card-flow svg { max-width: 360px; margin: 0 auto; } }
@@ -64,6 +64,9 @@
   .fn rect { fill: var(--panel2); stroke: var(--line); stroke-width: 1.5; transition: stroke .3s, fill .3s; }
   .fn text.l { fill: var(--muted); font: 700 12px ui-sans-serif, system-ui, sans-serif; }
   .fn text.s { fill: var(--muted); font: 9.5px ui-sans-serif, system-ui, sans-serif; }
+  .fn text.r { fill: var(--muted); font: 10px ui-sans-serif, system-ui, sans-serif; }
+  .fn text.r.ok { fill: var(--green); } .fn text.r.bad { fill: var(--red); font-weight: 700; }
+  .fn text.r.pick { fill: var(--amber); font-weight: 800; }
   .fn text.c { fill: var(--amber); font: 800 10px ui-sans-serif, system-ui, sans-serif; }
   .fn.visited rect { stroke: #4a5a70; } .fn.visited text.l { fill: var(--text); }
   .fn.pass rect { stroke: var(--green); } .fn.fail rect { stroke: var(--red); }
@@ -241,12 +244,12 @@ const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } 
 const setHTML = (el, html) => { if (el && el._html !== html) { el.innerHTML = html; el._html = html; } };
 const favicon = (d) => `https://www.google.com/s2/favicons?domain=${encodeURIComponent(d)}&sz=32`;
 
-let counts, claims, clock, liveMode = ["…", ""];
+let counts, claims, clock, lastDod = null, liveMode = ["…", ""];
 const clockTimer = setInterval(drawClock, 250);
 
 function reset() {
   counts = { claims: 0, search: 0, debates: 0, splits: 0, rejected: 0, fixes: 0, esc: 0, llm: 0 };
-  claims = {};
+  claims = {}; lastDod = null;
   clock = { t0: null, evT: 0, wall: 0, speed: 1, running: false };
   $("banner").className = ""; $("banner").textContent = "";
   $("mchecks").innerHTML = '<div class="empty">Running…</div>';
@@ -398,37 +401,45 @@ function renderVerdict(claim, v, status, reason) {
 }
 
 // ---------- agent-loop flowchart (right column of each card) ----------
-const FLOW_NODES = [
+// [id, x, y, w, h, title, subtitle, class, checklist rows]
+// Code checks and Supervisor carry live checklists so the presenter can point at the exact rule.
+const flowNodes = (d) => [
   ["research", 25, 16, 150, 38, "🔎 Researcher", "writes search queries"],
   ["search", 25, 76, 150, 38, "You.com search", "adds new evidence"],
   ["debate", 25, 136, 150, 38, "Advocate ⚔ Skeptic", "argue for and against"],
   ["judge", 25, 196, 150, 38, "⚖ Judge", "verdict + citations"],
-  ["checks", 25, 256, 150, 38, "Code checks", "sources, domains, citations"],
-  ["verifier", 25, 316, 150, 38, "Verifier", "acceptance criteria"],
-  ["supervisor", 210, 236, 120, 46, "Supervisor", "decides next step"],
-  ["done", 8, 404, 100, 38, "DONE", "verified", "t-done"],
-  ["escalated", 118, 404, 104, 38, "HUMAN", "review", "t-escalated"],
-  ["unverifiable", 232, 404, 100, 38, "UNVERIFIABLE", "closed", "t-unverifiable"],
+  ["checks", 25, 256, 150, 78, "Code checks", "4 rules · no LLM", "", [
+    ["valid_verdict", "label is allowed"], ["no_invented_citations", "citations are real"],
+    ["min_sources", d ? `${d.min_sources}+ sources cited` : "enough sources"],
+    ["distinct_domains", d ? `${d.min_distinct_domains}+ different websites` : "enough websites"]]],
+  ["verifier", 25, 352, 150, 38, "Verifier", "independent 2nd opinion"],
+  ["supervisor", 204, 248, 130, 106, "Supervisor", "on a fail · rules, no LLM", "", [
+    ["continue", "continue → re-judge"], ["replan", "replan → search more"],
+    ["stop", "stop → unverifiable"], ["escalate", "escalate → human"]]],
+  ["done", 8, 468, 100, 38, "DONE", "verified", "t-done"],
+  ["escalated", 118, 468, 104, 38, "HUMAN", "review", "t-escalated"],
+  ["unverifiable", 232, 468, 100, 38, "UNVERIFIABLE", "closed", "t-unverifiable"],
 ];
 // [id, path, label, label x, label y, failure path?]
 const FLOW_EDGES = [
   ["rs", "M100,54 V74"], ["sd", "M100,114 V134"], ["dj", "M100,174 V194"], ["jc", "M100,234 V254"],
   ["sr", "M25,95 H12 V35 H23", "retry", 1, 68, true],
-  ["cv", "M100,294 V314", "pass", 106, 308],
-  ["cs", "M175,275 H190 V259 H208", "fail", 181, 270, true],
-  ["vs", "M175,335 H270 V284", "fail", 230, 331, true],
-  ["cont", "M240,236 V155 H177", "continue", 186, 150],
-  ["replan", "M300,236 V35 H177", "replan", 304, 140],
-  ["vd", "M70,354 V380 H58 V402", "pass", 74, 376],
-  ["ve", "M130,354 V380 H160 V402", "low conf.", 120, 394],
-  ["se", "M240,282 V390 H200 V402", "escalate", 244, 376],
-  ["su", "M305,282 V402", "stop", 309, 376, true],
+  ["cv", "M100,334 V350", "pass", 106, 346],
+  ["cs", "M175,282 H202", "fail", 179, 277, true],
+  ["vs", "M175,371 H269 V356", "fail", 226, 367, true],
+  ["cont", "M240,248 V155 H177", "continue", 186, 150],
+  ["replan", "M310,248 V35 H177", "replan", 314, 140],
+  ["vd", "M70,390 V416 H58 V466", "pass", 74, 412],
+  ["ve", "M130,390 V416 H160 V466", "low conf.", 136, 430],
+  ["se", "M240,354 V450 H200 V466", "escalate", 244, 432],
+  ["su", "M310,354 V466", "stop", 314, 432, true],
 ];
-const FLOW_SVG = `<svg viewBox="0 0 340 450" role="img" aria-label="Agent loop state">
-  ${FLOW_EDGES.map(([id, d, lab, lx, ly, bad]) => `<path class="fe${bad ? " badpath" : ""}" data-e="${id}" d="${d}"/>${lab ? `<text class="el" x="${lx}" y="${ly}">${lab}</text>` : ""}`).join("")}
-  ${FLOW_NODES.map(([id, x, y, w, h, l, sub, cls]) => `<g class="fn ${cls || ""}" data-n="${id}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="9"/>
-    <text class="l" x="${x + w / 2}" y="${y + h / 2 - 1}" text-anchor="middle">${l}</text>
-    <text class="s" x="${x + w / 2}" y="${y + h / 2 + 11}" text-anchor="middle">${sub}</text>
+const flowSVG = (d) => `<svg viewBox="0 0 340 512" role="img" aria-label="Agent loop state">
+  ${FLOW_EDGES.map(([id, path, lab, lx, ly, bad]) => `<path class="fe${bad ? " badpath" : ""}" data-e="${id}" d="${path}"/>${lab ? `<text class="el" x="${lx}" y="${ly}">${lab}</text>` : ""}`).join("")}
+  ${flowNodes(d).map(([id, x, y, w, h, l, sub, cls, rows]) => `<g class="fn ${cls || ""}" data-n="${id}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="9"/>
+    <text class="l" x="${x + w / 2}" y="${rows ? y + 16 : y + h / 2 - 1}" text-anchor="middle">${l}</text>
+    <text class="s" x="${x + w / 2}" y="${rows ? y + 28 : y + h / 2 + 11}" text-anchor="middle">${sub}</text>
+    ${(rows || []).map(([k, t], i) => `<text class="r" data-k="${k}" data-t="${esc(t)}" x="${x + 10}" y="${y + 39 + i * 11.5}">· ${esc(t)}</text>`).join("")}
     <text class="c" x="${x + w - 6}" y="${y + 11}" text-anchor="end"></text></g>`).join("")}
 </svg>`;
 
@@ -462,6 +473,11 @@ function flowEdgeNow(claim, edge) {
   if (e) { e.classList.add("taken", "now"); if (e.classList.contains("badpath")) e.classList.add("bad"); }
 }
 
+function flowRows(claim, node, fn) {
+  q(claim, `[data-n="${node}"]`)?.querySelectorAll("text.r").forEach((r) => fn(r, r.dataset.k));
+}
+function setRow(r, mark, cls) { r.textContent = `${mark} ${r.dataset.t}`; r.classList.remove("ok", "bad", "pick"); if (cls) r.classList.add(cls); }
+
 function flowOnEvent(ev) {
   const id = ev.claim, st = claims[id];
   if (!id || !st) return;
@@ -483,8 +499,12 @@ function flowOnEvent(ev) {
       flowMark(id, "verifier", ev.passed);
       q(id, ".flow-now").textContent = `Verifier: ${ev.passed ? "passed" : "rejected"} the verdict`;
     } else {
-      if (cur !== "checks") { flowMark(id, "checks", null); flowGo(id, "checks", "jc", "Running the definition-of-done checks in code"); }
-      if (!ev.passed) { flowMark(id, "checks", false); q(id, ".flow-now").textContent = `Code check failed: ${ev.name.replaceAll("_", " ")}`; }
+      if (cur !== "checks") {
+        flowMark(id, "checks", null); flowRows(id, "checks", (r) => setRow(r, "·"));
+        flowGo(id, "checks", "jc", "Running the definition-of-done checks in code");
+      }
+      flowRows(id, "checks", (r, k) => { if (k === ev.name) setRow(r, ev.passed ? "✓" : "✗", ev.passed ? "ok" : "bad"); });
+      if (!ev.passed) { flowMark(id, "checks", false); q(id, ".flow-now").textContent = `Code check failed: ${ev.detail}`; }
     }
   } else if (ev.type === "decision") {
     if (cur === "search" || cur === "research") {  // empty search: the loop retries research before any debate
@@ -492,7 +512,7 @@ function flowOnEvent(ev) {
       return;
     }
     flowGo(id, "supervisor", cur === "checks" ? "cs" : "vs", `Supervisor: ${ev.action.toUpperCase()} · ${ev.reason}`);
-    flowMark(id, "supervisor", null, ev.action);
+    flowRows(id, "supervisor", (r, k) => setRow(r, k === ev.action ? "▶" : "·", k === ev.action ? "pick" : null));
   } else if (ev.type === "claim_done") {
     const from = st.flow?.cur;
     const edge = ev.status === "done" ? "vd" : ev.status === "escalated" ? (from === "supervisor" ? "se" : "ve") : (from === "supervisor" ? "su" : null);
@@ -509,7 +529,7 @@ function handle(ev) {
       clock.t0 = ev.t; clock.running = true;
       break;
     case "plan": {
-      const d = ev.dod;
+      const d = ev.dod; lastDod = d;
       $("dod").innerHTML = `<div style="margin-bottom:8px">${esc(d.goal)}</div>
         <div class="dod-nums">
           <div class="num"><b>${d.min_sources}</b><span>sources per verdict</span></div>
@@ -551,7 +571,7 @@ function handle(ev) {
           <div class="verdict"></div>
           <details class="log"><summary>Full log</summary><div class="feed"></div></details>
           </div>
-          <div class="card-flow"><div class="flow-title">Agent loop</div><div class="flow-now">Waiting for the researcher…</div>${FLOW_SVG}</div>
+          <div class="card-flow"><div class="flow-title">Agent loop</div><div class="flow-now">Waiting for the researcher…</div>${flowSVG(lastDod)}</div>
           </div>
         </div>`).join("");
       break;
