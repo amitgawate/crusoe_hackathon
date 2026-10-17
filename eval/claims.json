@@ -1,0 +1,125 @@
+{
+  "about": "Well-documented facts and myths. dev is used to choose prompt changes; test is held out and only used for the before/after score.",
+  "items": [
+    {
+      "claim": "The Eiffel Tower was completed in 1889.",
+      "label": "true",
+      "split": "dev"
+    },
+    {
+      "claim": "The Great Wall of China is visible from the Moon with the naked eye.",
+      "label": "false",
+      "split": "dev"
+    },
+    {
+      "claim": "Mount Everest is the highest mountain above sea level.",
+      "label": "true",
+      "split": "test"
+    },
+    {
+      "claim": "Humans only use 10% of their brains.",
+      "label": "false",
+      "split": "test"
+    },
+    {
+      "claim": "At sea level, pure water boils at 100 degrees Celsius.",
+      "label": "true",
+      "split": "dev"
+    },
+    {
+      "claim": "Lightning never strikes the same place twice.",
+      "label": "false",
+      "split": "dev"
+    },
+    {
+      "claim": "The Pacific is the largest ocean on Earth.",
+      "label": "true",
+      "split": "test"
+    },
+    {
+      "claim": "Goldfish have a memory span of only three seconds.",
+      "label": "false",
+      "split": "test"
+    },
+    {
+      "claim": "Venus is the hottest planet in the solar system.",
+      "label": "true",
+      "split": "dev"
+    },
+    {
+      "claim": "Bulls are enraged by the color red.",
+      "label": "false",
+      "split": "dev"
+    },
+    {
+      "claim": "Octopuses have three hearts.",
+      "label": "true",
+      "split": "test"
+    },
+    {
+      "claim": "Napoleon Bonaparte was unusually short for a Frenchman of his time.",
+      "label": "false",
+      "split": "test"
+    },
+    {
+      "claim": "Bananas are botanically classified as berries.",
+      "label": "true",
+      "split": "dev"
+    },
+    {
+      "claim": "Bats are blind.",
+      "label": "false",
+      "split": "dev"
+    },
+    {
+      "claim": "Sharks existed before trees.",
+      "label": "true",
+      "split": "test"
+    },
+    {
+      "claim": "Viking warriors wore horned helmets in battle.",
+      "label": "false",
+      "split": "test"
+    },
+    {
+      "claim": "A day on Venus is longer than a year on Venus.",
+      "label": "true",
+      "split": "dev"
+    },
+    {
+      "claim": "Glass is a slow-flowing liquid at room temperature.",
+      "label": "false",
+      "split": "dev"
+    },
+    {
+      "claim": "Light from the Sun takes about eight minutes to reach Earth.",
+      "label": "true",
+      "split": "test"
+    },
+    {
+      "claim": "Cracking your knuckles causes arthritis.",
+      "label": "false",
+      "split": "test"
+    },
+    {
+      "claim": "Honey can remain edible for thousands of years.",
+      "label": "true",
+      "split": "dev"
+    },
+    {
+      "claim": "The human tongue has separate zones for sweet, sour, salty and bitter tastes.",
+      "label": "false",
+      "split": "dev"
+    },
+    {
+      "claim": "Wombat droppings are cube-shaped.",
+      "label": "true",
+      "split": "test"
+    },
+    {
+      "claim": "Mount Everest is the tallest mountain on Earth when measured from base to peak.",
+      "label": "false",
+      "split": "test"
+    }
+  ]
+}

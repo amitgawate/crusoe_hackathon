@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Done Means Done</title>
+<style>
+  :root {
+    --bg: #0e1116; --panel: #161b22; --panel2: #1c232d; --line: #2a3340; --text: #e6edf3; --muted: #8b98a8;
+    --green: #3fb950; --red: #f85149; --amber: #d29922; --blue: #58a6ff; --purple: #bc8cff; --teal: #39c5cf;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { padding: 16px 24px; border-bottom: 1px solid var(--line); display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  header h1 { margin: 0; font-size: 20px; }
+  header .sub { color: var(--muted); }
+  .badge { font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+  .badge.mock { color: var(--amber); border-color: var(--amber); }
+  .badge.live { color: var(--green); border-color: var(--green); }
+  main { display: grid; grid-template-columns: 340px 1fr; gap: 16px; padding: 16px 24px; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; padding: 16px; } }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+  .panel h2 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  textarea, input { width: 100%; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font: inherit; }
+  textarea { min-height: 150px; resize: vertical; }
+  label { display: block; color: var(--muted); font-size: 12px; margin: 10px 0 4px; }
+  button { margin-top: 12px; width: 100%; padding: 10px; border: 0; border-radius: 8px; background: var(--blue); color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: default; }
+  .side { display: flex; flex-direction: column; gap: 16px; }
+  .dod-nums { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+  .num { background: var(--panel2); border-radius: 8px; padding: 6px 8px; }
+  .num b { font-size: 18px; display: block; }
+  .num span { color: var(--muted); font-size: 11px; }
+  ul.crit { margin: 0; padding-left: 18px; }
+  ul.crit li { margin: 4px 0; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .empty { color: var(--muted); font-style: italic; }
+  #claims { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; align-content: start; }
+  @media (max-width: 500px) { #claims { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; display: flex; flex-direction: column; min-height: 260px; }
+  .card.done { border-color: var(--green); }
+  .card.escalated { border-color: var(--amber); }
+  .card.unverifiable { border-color: var(--muted); }
+  .card-head { padding: 12px 14px; border-bottom: 1px solid var(--line); display: flex; gap: 10px; align-items: flex-start; }
+  .card-head .cid { color: var(--muted); font-weight: 600; }
+  .card-head .txt { flex: 1; font-weight: 500; }
+  .pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; white-space: nowrap; background: var(--panel2); color: var(--muted); }
+  .pill.working { color: var(--blue); } .pill.done { color: var(--green); } .pill.escalated { color: var(--amber); }
+  .pill.stakes { color: var(--red); }
+  .feed { padding: 8px 14px; flex: 1; max-height: 300px; overflow-y: auto; font-size: 13px; }
+  .ev { padding: 4px 0; border-bottom: 1px dashed #222a35; display: flex; gap: 8px; }
+  .ev:last-child { border-bottom: 0; }
+  .who { flex: 0 0 82px; font-weight: 600; font-size: 12px; }
+  .who.researcher { color: var(--teal); } .who.advocate { color: var(--green); } .who.skeptic { color: var(--red); }
+  .who.judge { color: var(--purple); } .who.verifier { color: var(--blue); } .who.supervisor { color: var(--amber); }
+  .who.check { color: var(--muted); }
+  .what { flex: 1; color: #c9d1d9; word-break: break-word; }
+  .what.thinking { color: var(--muted); font-style: italic; }
+  .ok { color: var(--green); } .bad { color: var(--red); }
+  .verdict { padding: 12px 14px; border-top: 1px solid var(--line); background: var(--panel2); border-radius: 0 0 10px 10px; }
+  .verdict .v { font-weight: 700; font-size: 15px; }
+  .v.true { color: var(--green); } .v.false { color: var(--red); } .v.misleading { color: var(--amber); } .v.unverifiable { color: var(--muted); }
+  .verdict .why { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .verdict a { color: var(--blue); font-size: 12px; text-decoration: none; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #banner { margin: 0 0 16px; padding: 12px 14px; border-radius: 10px; display: none; }
+  #banner.ok { display: block; background: rgba(63,185,80,.12); border: 1px solid var(--green); }
+  #banner.warn { display: block; background: rgba(210,153,34,.12); border: 1px solid var(--amber); }
+  #banner.err { display: block; background: rgba(248,81,73,.12); border: 1px solid var(--red); }
+  .mission-checks div { margin: 3px 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Done Means Done</h1>
+  <span class="sub">A fact-checking agent team that writes its own definition of done, checks itself, and knows when to stop.</span>
+  <span id="mode" class="badge">…</span>
+</header>
+<main>
+  <div class="side">
+    <div class="panel">
+      <h2>Mission</h2>
+      <label for="goal">One-line goal</label>
+      <input id="goal" value="Fact-check this text before we publish it">
+      <label for="text">Text</label>
+      <textarea id="text"></textarea>
+      <button id="run">Run the team</button>
+    </div>
+    <div class="panel">
+      <h2>Definition of done (written by the planner)</h2>
+      <div id="dod"><div class="empty">The planner writes this when the mission starts.</div></div>
+    </div>
+    <div class="panel">
+      <h2>Mission checks</h2>
+      <div id="mchecks" class="mission-checks"><div class="empty">Not run yet.</div></div>
+    </div>
+    <div class="panel">
+      <h2>Run stats</h2>
+      <div class="stats">
+        <div class="num"><b id="s-llm">0</b><span>LLM calls</span></div>
+        <div class="num"><b id="s-search">0</b><span>searches</span></div>
+        <div class="num"><b id="s-dec">0</b><span>self-corrections</span></div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div id="banner"></div>
+    <div id="claims"><div class="empty">Claims appear here once the extractor has read the text.</div></div>
+  </div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+let counts = { llm: 0, search: 0, dec: 0 };
+
+fetch("/api/config").then((r) => r.json()).then((c) => {
+  $("text").value = c.sample;
+  const m = $("mode");
+  m.textContent = c.mock ? "offline mock mode" : `live · ${c.model_strong.split("/").pop()} + ${c.model_fast.split("/").pop()}`;
+  m.className = "badge " + (c.mock ? "mock" : "live");
+});
+
+function addEv(claim, who, text, cls = "") {
+  const feed = document.querySelector(`#card-${claim} .feed`);
+  if (!feed) return;
+  const div = document.createElement("div");
+  div.className = "ev";
+  div.innerHTML = `<span class="who ${who}">${esc(who)}</span><span class="what ${cls}">${text}</span>`;
+  feed.appendChild(div);
+  feed.scrollTop = feed.scrollHeight;
+}
+
+function renderVerdict(claim, v, status, reason) {
+  const card = $(`card-${claim}`);
+  card.className = `card ${status}`;
+  card.querySelector(".pill.state").className = `pill state ${status}`;
+  card.querySelector(".pill.state").textContent = status;
+  const box = card.querySelector(".verdict");
+  const verdict = (v && v.verdict) || "unverifiable";
+  const conf = v ? ` · ${Math.round(v.confidence * 100)}% confident` : "";
+  const srcs = (v && v.sources || []).map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener">[${s.n}] ${esc(s.domain)} · ${esc(s.title)}</a>`).join("");
+  box.innerHTML = `<div class="v ${esc(verdict)}">${esc(verdict.toUpperCase())}<span style="font-weight:400;color:var(--muted);font-size:12px">${conf}</span></div>
+    <div class="why">${esc(v ? v.explanation : "")}</div>${srcs}
+    <div class="why" style="margin-top:6px">${status === "escalated" ? "⚑ " : ""}${esc(reason)}</div>`;
+  box.style.display = "block";
+}
+
+function handle(ev) {
+  switch (ev.type) {
+    case "mission_start":
+      $("banner").className = ""; $("banner").textContent = "";
+      break;
+    case "plan": {
+      const d = ev.dod;
+      $("dod").innerHTML = `<div style="margin-bottom:8px">${esc(d.goal)}</div>
+        <div class="dod-nums">
+          <div class="num"><b>${d.min_sources}</b><span>sources per verdict</span></div>
+          <div class="num"><b>${d.min_distinct_domains}</b><span>distinct outlets</span></div>
+          <div class="num"><b>${d.max_research_attempts}</b><span>max search attempts</span></div>
+          <div class="num"><b>${d.max_judge_rounds}</b><span>max judge rounds</span></div>
+        </div>
+        <ul class="crit">${d.acceptance_criteria.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
+        ${d.escalate_when ? `<div class="why" style="color:var(--amber);margin-top:8px">Ask a human when: ${esc(d.escalate_when)}</div>` : ""}`;
+      counts.llm++;
+      break;
+    }
+    case "claims":
+      counts.llm++;
+      $("claims").innerHTML = ev.claims.map((c) => `
+        <div class="card" id="card-${c.id}">
+          <div class="card-head"><span class="cid">${c.id}</span><span class="txt">${esc(c.text)}</span>
+            ${c.high_stakes ? '<span class="pill stakes">high stakes</span>' : ""}<span class="pill state working">working</span></div>
+          <div class="feed"></div>
+          <div class="verdict" style="display:none"></div>
+        </div>`).join("");
+      break;
+    case "agent":
+      if (ev.status === "thinking") counts.llm++;
+      addEv(ev.claim, ev.agent, esc(ev.text), ev.status === "thinking" ? "thinking" : "");
+      break;
+    case "search":
+      counts.search++;
+      addEv(ev.claim, "researcher", ev.error
+        ? `<span class="bad">search failed</span>: ${esc(ev.error)}`
+        : `🔎 “${esc(ev.query)}” → <b>${ev.count}</b> new results`);
+      break;
+    case "check":
+      if (!ev.claim) {
+        if ($("mchecks").querySelector(".empty")) $("mchecks").innerHTML = "";
+        $("mchecks").insertAdjacentHTML("beforeend", `<div class="${ev.passed ? "ok" : "bad"}">${ev.passed ? "✓" : "✗"} ${esc(ev.name.replaceAll("_", " "))}</div>`);
+      } else {
+        addEv(ev.claim, "check", `<span class="${ev.passed ? "ok" : "bad"}">${ev.passed ? "✓" : "✗"} ${esc(ev.name.replaceAll("_", " "))}</span> <span style="color:var(--muted)">${esc(ev.detail)}</span>`);
+      }
+      break;
+    case "decision":
+      counts.dec++;
+      addEv(ev.claim, "supervisor", `<b>${esc(ev.action.toUpperCase())}</b> · ${esc(ev.reason)}`);
+      break;
+    case "loop":
+      counts.dec++;
+      addEv(ev.claim, "supervisor", `<b>LOOP CAUGHT</b> · ${esc(ev.text)}`);
+      break;
+    case "claim_done":
+      renderVerdict(ev.claim, ev.verdict, ev.status, ev.reason);
+      break;
+    case "mission_done": {
+      const s = ev.summary;
+      counts.llm = s.stats.llm_calls; counts.search = s.stats.searches;
+      const b = $("banner");
+      if (s.escalations.length) {
+        b.className = "warn";
+        b.textContent = `Done. ${s.claims.length - s.escalations.length} claims closed on their own; ${s.escalations.length} flagged for a human (${s.escalations.join(", ")}).`;
+      } else {
+        b.className = s.done ? "ok" : "warn";
+        b.textContent = s.done ? `Done. All ${s.claims.length} claims passed the definition of done with no human needed.` : "The mission ended without meeting its definition of done.";
+      }
+      $("run").disabled = false;
+      break;
+    }
+    case "error":
+      $("banner").className = "err"; $("banner").textContent = ev.message; $("run").disabled = false;
+      break;
+  }
+  $("s-llm").textContent = counts.llm; $("s-search").textContent = counts.search; $("s-dec").textContent = counts.dec;
+}
+
+$("run").onclick = async () => {
+  $("run").disabled = true;
+  counts = { llm: 0, search: 0, dec: 0 };
+  $("mchecks").innerHTML = '<div class="empty">Running…</div>';
+  $("claims").innerHTML = '<div class="empty">Planner is writing the definition of done…</div>';
+  try {
+    const resp = await fetch("/api/run", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: $("text").value, goal: $("goal").value }) });
+    const reader = resp.body.getReader();
+    const dec = new TextDecoder();
+    let buf = "";
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let i;
+      while ((i = buf.indexOf("\n\n")) >= 0) {
+        const chunk = buf.slice(0, i); buf = buf.slice(i + 2);
+        if (chunk.startsWith("data: ")) handle(JSON.parse(chunk.slice(6)));
+      }
+    }
+  } catch (e) {
+    handle({ type: "error", message: String(e) });
+  }
+  $("run").disabled = false;
+};
+</script>
+</body>
+</html>
