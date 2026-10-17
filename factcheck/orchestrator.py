@@ -206,6 +206,25 @@ class Mission:
                             results=[{"url": r["url"], "title": r["title"]} for r in new])
         return len(c.evidence) > before
 
+    @staticmethod
+    def _debate_fields(c: ClaimState, side: dict) -> dict:
+        """Stance, strength and valid citations from an advocate/skeptic reply, for the debate UI."""
+        stance = str(side.get("stance", "")).lower().strip()
+        try:
+            strength = max(0.0, min(1.0, float(side.get("strength", 0.5))))
+        except (TypeError, ValueError):
+            strength = 0.5
+        cites = []
+        for n in side.get("cites", []) if isinstance(side.get("cites"), list) else []:
+            try:
+                n = int(n)
+            except (TypeError, ValueError):
+                continue
+            if 1 <= n <= len(c.evidence) and n not in cites:
+                cites.append(n)
+        return {"stance": stance if stance in ("supports", "refutes", "concedes") else "", "strength": strength,
+                "cites": cites}
+
     def _evidence_block(self, c: ClaimState) -> str:
         return "\n".join(f"[{i + 1}] {e['title']} ({e['domain']})\n{e['snippet']}" for i, e in enumerate(c.evidence))
 
@@ -218,8 +237,9 @@ class Mission:
             self.llm.json("advocate", self.p["advocate"], ctx),
             self.llm.json("skeptic", self.p["skeptic"], ctx),
         )
-        await self.emit("agent", claim=c.id, agent="advocate", status="said", text=str(adv.get("argument", ""))[:400])
-        await self.emit("agent", claim=c.id, agent="skeptic", status="said", text=str(skp.get("argument", ""))[:400])
+        for name, side in (("advocate", adv), ("skeptic", skp)):
+            await self.emit("agent", claim=c.id, agent=name, status="said", text=str(side.get("argument", ""))[:400],
+                            round=c.judge_rounds, **self._debate_fields(c, side))
         await self.emit("agent", claim=c.id, agent="judge", status="thinking",
                         text=f"Weighing both sides (round {c.judge_rounds})")
         j = await self.llm.json(
@@ -249,7 +269,7 @@ class Mission:
             "raw_cites": j.get("cites", []),
         }
         await self.emit("agent", claim=c.id, agent="judge", status="said",
-                        text=f"{verdict.upper()} ({conf:.0%}): {v['explanation'][:300]}", verdict=v)
+                        text=f"{verdict.upper()} ({conf:.0%}): {v['explanation'][:300]}", verdict=v, round=c.judge_rounds)
         return v
 
     async def verify(self, c: ClaimState, v: dict) -> tuple[bool, list[str]]:
@@ -270,7 +290,7 @@ class Mission:
         failures = []
         for name, ok, detail in checks:
             c.checks.append({"name": name, "passed": ok, "detail": detail, "round": c.judge_rounds})
-            await self.emit("check", claim=c.id, name=name, passed=ok, detail=detail, by="code")
+            await self.emit("check", claim=c.id, name=name, passed=ok, detail=detail, by="code", round=c.judge_rounds)
             if not ok:
                 failures.append(f"{name}: {detail}")
         if failures:
@@ -288,7 +308,8 @@ class Mission:
         ok = bool(out.get("passed"))
         detail = out.get("feedback") or ("; ".join(out.get("failures", [])) or "looks good")
         c.checks.append({"name": "independent_verifier", "passed": ok, "detail": detail, "round": c.judge_rounds})
-        await self.emit("check", claim=c.id, name="independent_verifier", passed=ok, detail=str(detail)[:300], by="agent")
+        await self.emit("check", claim=c.id, name="independent_verifier", passed=ok, detail=str(detail)[:300], by="agent",
+                        round=c.judge_rounds)
         if ok:
             return True, []
         return False, [f"verifier: {f}" for f in out.get("failures", [])] or [f"verifier: {detail}"]

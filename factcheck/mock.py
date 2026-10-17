@@ -21,7 +21,12 @@ KNOWN = [
     ("goldfish", "false", "Studies show goldfish can remember things for months, not three seconds."),
     ("vitamin c", "misleading", "Reviews find vitamin C does not prevent colds for most people, though it may shorten them slightly."),
     ("mount everest", "true", "Mount Everest is Earth's highest mountain above sea level at about 8,849 m."),
+    ("venus", "true", "Venus takes about 243 Earth days to rotate once but only about 225 to orbit the Sun."),
+    ("bats", "false", "All bat species can see; many also echolocate, and fruit bats have excellent night vision."),
+    ("napoleon", "false", "Napoleon was about 5 ft 7 in, average for his era; the myth comes from French vs English inches."),
 ]
+# Claims where the losing side still has a real case, so the mock debate splits instead of one side conceding.
+CONTESTED = ("venus", "bats", "napoleon")
 HIGH_STAKES = ("vitamin", "vaccine", "cure", "cancer", "election", "invest", "covid")
 
 
@@ -72,9 +77,17 @@ def llm(role: str, system: str, user: str) -> str:
     elif role in ("advocate", "skeptic"):
         verdict, fact = _lookup(claim)
         agrees = (verdict == "true") == (role == "advocate")
-        out = {"argument": (f"The evidence backs this side: {fact}" if agrees else
-                            f"The evidence does not really support this side. {fact}"),
-               "cites": [1, 2]}
+        contested = any(k in claim.lower() for k in CONTESTED)
+        side = "supports" if role == "advocate" else "refutes"
+        if agrees:
+            out = {"argument": f"The evidence backs this side: {fact}", "cites": [1, 2], "stance": side,
+                   "strength": 0.85}
+        elif contested:
+            out = {"argument": "The claim hinges on wording; read loosely, some of the evidence points this way.",
+                   "cites": [3] if role == "advocate" else [2, 3], "stance": side, "strength": 0.55}
+        else:
+            out = {"argument": f"The evidence does not really support this side. {fact}", "cites": [1],
+                   "stance": "concedes", "strength": 0.1}
     elif role == "judge":
         verdict, fact = _lookup(claim)
         first_round = "Feedback from verifier: (none)" in user

@@ -113,3 +113,14 @@ def test_distinct_case_sensitive_units_are_not_merged():
     assert [c["text"] for c in summary["claims"]] == [
         "The device consumes 5 mW.", "The device consumes 5 MW."
     ]
+
+
+def test_debate_events_carry_stance_and_some_claims_split():
+    _, events = run(SAMPLE_TEXT)
+    said = [e for e in events if e["type"] == "agent" and e["status"] == "said" and e["agent"] in ("advocate", "skeptic")]
+    assert said and all(e["stance"] in ("supports", "refutes", "concedes") and "round" in e for e in said)
+    by_claim = {}
+    for e in said:
+        by_claim.setdefault((e["claim"], e["round"]), {})[e["agent"]] = e["stance"]
+    splits = {c for (c, _), s in by_claim.items() if s.get("advocate") == "supports" and s.get("skeptic") == "refutes"}
+    assert len(splits) >= 2

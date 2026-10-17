@@ -8,8 +8,9 @@ from .config import Config
 from .orchestrator import Mission
 
 SAMPLE_TEXT = (
-    "The Eiffel Tower was completed in 1889. The Great Wall of China is visible from the Moon with the naked eye. "
-    "Humans only use 10% of their brains. Lightning never strikes the same place twice. "
+    "A day on Venus is longer than its year. Bats are blind and find their way only by echolocation. "
+    "Napoleon was unusually short, at about 5 feet 2 inches. "
+    "The Great Wall of China is visible from the Moon with the naked eye. "
     "Taking vitamin C every day prevents the common cold."
 )
 

@@ -1,8 +1,10 @@
 """Web UI: uvicorn server:app --reload, then open http://localhost:8000"""
 import asyncio
 import json
+import re
+from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
@@ -12,6 +14,7 @@ from factcheck.config import Config
 from factcheck.orchestrator import Mission
 
 app = FastAPI(title="Done Means Done: fact-check agent team")
+RUNS = Path("runs")
 
 
 class RunRequest(BaseModel):
@@ -37,6 +40,34 @@ def index():
 def config():
     cfg = Config()
     return {"mock": cfg.mock, "model_strong": cfg.model_strong, "model_fast": cfg.model_fast, "sample": SAMPLE_TEXT}
+
+
+@app.get("/api/runs")
+def list_runs():
+    """Saved UI missions, newest first. Eval runs (no mission_start event) are left out."""
+    out = []
+    for p in sorted(RUNS.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True):
+        try:
+            data = json.loads(p.read_text())
+        except (OSError, ValueError):
+            continue
+        events = data.get("events", [])
+        if not events or events[0].get("type") != "mission_start":
+            continue
+        s = data.get("summary", {})
+        out.append({"id": p.stem, "t": events[0].get("t"), "claims": len(s.get("claims", [])),
+                    "mock": s.get("mock"), "done": s.get("done")})
+    return out
+
+
+@app.get("/api/runs/{run_id}")
+def get_run(run_id: str):
+    if not re.fullmatch(r"[a-f0-9]+", run_id):
+        raise HTTPException(400, "bad run id")
+    p = RUNS / f"{run_id}.json"
+    if not p.is_file():
+        raise HTTPException(404, "run not found")
+    return {"id": run_id, "events": json.loads(p.read_text()).get("events", [])}
 
 
 @app.post("/api/run")

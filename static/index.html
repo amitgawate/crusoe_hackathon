@@ -7,74 +7,168 @@
 <style>
   :root {
     --bg: #0e1116; --panel: #161b22; --panel2: #1c232d; --line: #2a3340; --text: #e6edf3; --muted: #8b98a8;
-    --green: #3fb950; --red: #f85149; --amber: #d29922; --blue: #58a6ff; --purple: #bc8cff; --teal: #39c5cf;
+    --green: #3fb950; --red: #f85149; --amber: #d29922; --blue: #58a6ff; --purple: #bc8cff; --teal: #39c5cf; --gold: #e3b341;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
-  header { padding: 16px 24px; border-bottom: 1px solid var(--line); display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
-  header h1 { margin: 0; font-size: 20px; }
+  header { padding: 14px 24px; border-bottom: 1px solid var(--line); display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  header h1 { margin: 0; font-size: 22px; letter-spacing: -.01em; }
   header .sub { color: var(--muted); }
   .badge { font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
   .badge.mock { color: var(--amber); border-color: var(--amber); }
   .badge.live { color: var(--green); border-color: var(--green); }
-  main { display: grid; grid-template-columns: 340px 1fr; gap: 16px; padding: 16px 24px; }
-  @media (max-width: 900px) { main { grid-template-columns: 1fr; padding: 16px; } }
+  .badge.replay { color: var(--purple); border-color: var(--purple); }
+
+  /* scoreboard */
+  #scoreboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 8px; padding: 12px 24px 0; }
+  .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+  .tile b { display: block; font-size: 24px; font-variant-numeric: tabular-nums; line-height: 1.15; transition: color .3s; }
+  .tile span { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+  .tile.bump b { color: var(--blue); }
+  .tile.split b { color: var(--purple); } .tile.rej b { color: var(--red); } .tile.fix b { color: var(--amber); } .tile.esc b { color: var(--amber); }
+
+  main { display: grid; grid-template-columns: 330px 1fr; gap: 16px; padding: 16px 24px; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; padding: 16px; } #scoreboard { padding: 12px 16px 0; } header { padding: 14px 16px; } }
+  .side { display: flex; flex-direction: column; gap: 16px; }
   .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
   .panel h2 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
-  textarea, input { width: 100%; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font: inherit; }
-  textarea { min-height: 150px; resize: vertical; }
+  textarea, input, select { width: 100%; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font: inherit; }
+  textarea { min-height: 140px; resize: vertical; }
   label { display: block; color: var(--muted); font-size: 12px; margin: 10px 0 4px; }
   button { margin-top: 12px; width: 100%; padding: 10px; border: 0; border-radius: 8px; background: var(--blue); color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; }
+  button.secondary { background: var(--panel2); border: 1px solid var(--purple); color: var(--purple); }
   button:disabled { opacity: .5; cursor: default; }
-  .side { display: flex; flex-direction: column; gap: 16px; }
+  .row { display: flex; gap: 8px; } .row > * { flex: 1; } .row .speed { flex: 0 0 80px; }
   .dod-nums { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
   .num { background: var(--panel2); border-radius: 8px; padding: 6px 8px; }
-  .num b { font-size: 18px; display: block; }
-  .num span { color: var(--muted); font-size: 11px; }
-  ul.crit { margin: 0; padding-left: 18px; }
-  ul.crit li { margin: 4px 0; }
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .num b { font-size: 18px; display: block; } .num span { color: var(--muted); font-size: 11px; }
+  ul.crit { margin: 0; padding-left: 18px; } ul.crit li { margin: 4px 0; }
   .empty { color: var(--muted); font-style: italic; }
-  #claims { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; align-content: start; }
-  @media (max-width: 500px) { #claims { grid-template-columns: 1fr; } }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; display: flex; flex-direction: column; min-height: 260px; }
-  .card.done { border-color: var(--green); }
-  .card.escalated { border-color: var(--amber); }
-  .card.unverifiable { border-color: var(--muted); }
-  .card-head { padding: 12px 14px; border-bottom: 1px solid var(--line); display: flex; gap: 10px; align-items: flex-start; }
-  .card-head .cid { color: var(--muted); font-weight: 600; }
-  .card-head .txt { flex: 1; font-weight: 500; }
-  .pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; white-space: nowrap; background: var(--panel2); color: var(--muted); }
-  .pill.working { color: var(--blue); } .pill.done { color: var(--green); } .pill.escalated { color: var(--amber); }
-  .pill.stakes { color: var(--red); }
-  .feed { padding: 8px 14px; flex: 1; max-height: 300px; overflow-y: auto; font-size: 13px; }
-  .ev { padding: 4px 0; border-bottom: 1px dashed #222a35; display: flex; gap: 8px; }
-  .ev:last-child { border-bottom: 0; }
-  .who { flex: 0 0 82px; font-weight: 600; font-size: 12px; }
-  .who.researcher { color: var(--teal); } .who.advocate { color: var(--green); } .who.skeptic { color: var(--red); }
-  .who.judge { color: var(--purple); } .who.verifier { color: var(--blue); } .who.supervisor { color: var(--amber); }
-  .who.check { color: var(--muted); }
-  .what { flex: 1; color: #c9d1d9; word-break: break-word; }
-  .what.thinking { color: var(--muted); font-style: italic; }
+  .mission-checks div { margin: 3px 0; }
   .ok { color: var(--green); } .bad { color: var(--red); }
-  .verdict { padding: 12px 14px; border-top: 1px solid var(--line); background: var(--panel2); border-radius: 0 0 10px 10px; }
-  .verdict .v { font-weight: 700; font-size: 15px; }
-  .v.true { color: var(--green); } .v.false { color: var(--red); } .v.misleading { color: var(--amber); } .v.unverifiable { color: var(--muted); }
-  .verdict .why { color: var(--muted); font-size: 12px; margin-top: 4px; }
-  .verdict a { color: var(--blue); font-size: 12px; text-decoration: none; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  #banner { margin: 0 0 16px; padding: 12px 14px; border-radius: 10px; display: none; }
-  #banner.ok { display: block; background: rgba(63,185,80,.12); border: 1px solid var(--green); }
+
+  #banner { margin: 0 0 16px; padding: 12px 14px; border-radius: 10px; display: none; font-weight: 500; }
+  #banner.ok { display: block; background: rgba(63,185,80,.12); border: 1px solid var(--green); box-shadow: 0 0 24px rgba(63,185,80,.25); }
   #banner.warn { display: block; background: rgba(210,153,34,.12); border: 1px solid var(--amber); }
   #banner.err { display: block; background: rgba(248,81,73,.12); border: 1px solid var(--red); }
-  .mission-checks div { margin: 3px 0; }
+
+  /* claim cards */
+  #claims { display: grid; grid-template-columns: repeat(auto-fill, minmax(460px, 1fr)); gap: 16px; align-content: start; }
+  @media (max-width: 560px) { #claims { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; display: flex; flex-direction: column; position: relative; transition: border-color .4s, box-shadow .4s; }
+  .card.done { border-color: var(--green); } .card.escalated { border-color: var(--amber); } .card.unverifiable { border-color: var(--muted); }
+  .card.shake { animation: shake .4s; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(3px); } }
+  .card-head { padding: 12px 14px; border-bottom: 1px solid var(--line); display: flex; gap: 10px; align-items: flex-start; }
+  .card-head .cid { color: var(--muted); font-weight: 700; }
+  .card-head .txt { flex: 1; font-weight: 600; font-size: 15px; }
+  .pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; white-space: nowrap; background: var(--panel2); color: var(--muted); }
+  .pill.working { color: var(--blue); } .pill.done { color: var(--green); } .pill.escalated { color: var(--amber); } .pill.stakes { color: var(--red); }
+  .stage { padding: 12px 14px; display: flex; flex-direction: column; gap: 12px; position: relative; }
+
+  /* face-off */
+  .faceoff { display: grid; grid-template-columns: 1fr 54px 1fr; gap: 6px; align-items: stretch; }
+  @media (max-width: 560px) { .faceoff { grid-template-columns: 1fr; } .vs { flex-direction: row !important; } }
+  .side-col { border-radius: 12px; padding: 8px 10px; min-height: 96px; display: flex; flex-direction: column; gap: 6px; border: 1px solid var(--line); background: var(--panel2); transition: border-color .3s, opacity .3s; }
+  .side-col.for { border-left: 4px solid var(--green); } .side-col.against { border-right: 4px solid var(--red); }
+  .side-col.conceded { opacity: .55; }
+  .side-top { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: .06em; }
+  .for .side-top { color: var(--green); } .against .side-top { color: var(--red); justify-content: flex-end; }
+  .rnd { font-weight: 600; color: var(--muted); letter-spacing: 0; }
+  .stance { font-size: 10px; padding: 1px 6px; border-radius: 999px; background: #0e1116; color: var(--muted); letter-spacing: .03em; }
+  .stance.supports { color: var(--green); } .stance.refutes { color: var(--red); } .stance.concedes { color: var(--muted); }
+  .bubble { font-size: 13px; color: #c9d1d9; flex: 1; animation: pop .25s ease-out; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; overflow: hidden; cursor: help; }
+  .bubble:hover { -webkit-line-clamp: unset; }
+  @keyframes pop { from { transform: translateY(6px) scale(.98); } to { transform: none; } }
+  .meter { height: 4px; background: #0e1116; border-radius: 4px; overflow: hidden; }
+  .meter i { display: block; height: 100%; width: 0; transition: width .6s ease-out; }
+  .for .meter i { background: var(--green); } .against .meter i { background: var(--red); margin-left: auto; }
+  .dots { color: var(--muted); font-style: italic; font-size: 12px; }
+  .dots::after { content: "…"; animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: .2; } }
+  .vs { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; font-weight: 900; color: var(--muted); font-size: 13px; }
+  .clash { font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 6px; letter-spacing: .04em; white-space: nowrap; }
+  .clash.split { background: rgba(188,140,255,.15); color: var(--purple); border: 1px solid var(--purple); animation: pulse 1.6s infinite; }
+  .clash.agree { background: var(--panel2); color: var(--muted); border: 1px solid var(--line); }
+  @keyframes pulse { 50% { box-shadow: 0 0 12px rgba(188,140,255,.6); } }
+
+  /* tug of war */
+  .tug { position: relative; padding: 14px 0 4px; }
+  .track { position: relative; height: 10px; border-radius: 10px; background: linear-gradient(90deg, rgba(248,81,73,.55), rgba(139,152,168,.18) 50%, rgba(63,185,80,.55)); }
+  .track::after { content: ""; position: absolute; left: 50%; top: -4px; bottom: -4px; width: 2px; background: var(--line); }
+  .tug-labels { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; letter-spacing: .08em; margin-top: 4px; }
+  .tug-labels .f { color: var(--red); } .tug-labels .t { color: var(--green); } .tug-labels .m { color: var(--muted); font-weight: 600; letter-spacing: 0; }
+  .marker { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: left .9s cubic-bezier(.2,1.4,.4,1); }
+  .marker.pull { width: 14px; height: 14px; border-radius: 50%; border: 2px dashed var(--text); opacity: .55; }
+  .marker.judge { width: 26px; height: 26px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 14px; background: var(--muted); box-shadow: 0 0 0 3px var(--panel); z-index: 2; }
+  .marker.judge.show { display: flex; }
+  .marker.judge.true { background: var(--green); } .marker.judge.false { background: var(--red); } .marker.judge.misleading { background: var(--amber); }
+
+  /* round stepper */
+  .rounds { display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
+  .rstep { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 4px 8px; background: var(--panel2); border-radius: 8px; animation: pop .25s ease-out; }
+  .rstep .rn { font-weight: 800; color: var(--muted); }
+  .rstep .jv { font-weight: 700; }
+  .rstep .jv.true { color: var(--green); } .rstep .jv.false { color: var(--red); } .rstep .jv.misleading { color: var(--amber); } .rstep .jv.unverifiable { color: var(--muted); }
+  .rstep.failed .jv { text-decoration: line-through; opacity: .6; }
+  .rstep .act { color: var(--amber); font-weight: 700; }
+  .rstep .why { flex-basis: 100%; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+  .arrow { color: var(--muted); }
+
+  /* evidence chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 2px 8px 2px 4px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel2); color: var(--text); text-decoration: none; max-width: 210px; animation: pop .25s ease-out; }
+  .chip img { width: 14px; height: 14px; border-radius: 3px; background: #fff; }
+  .chip .d { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chip.adv { border-color: var(--green); } .chip.skp { border-color: var(--red); } .chip.both { border-color: var(--purple); background: rgba(188,140,255,.12); }
+  .chip.judge { box-shadow: 0 0 0 2px var(--gold); }
+  .legend { font-size: 10px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; }
+  .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 3px; vertical-align: middle; }
+
+  /* verdict + stamps */
+  .verdict { display: none; gap: 14px; align-items: center; padding: 12px 14px; border-top: 1px solid var(--line); background: var(--panel2); border-radius: 0 0 12px 12px; }
+  .verdict.show { display: flex; }
+  .stamp { display: inline-block; border: 4px solid currentColor; border-radius: 8px; padding: 4px 12px; font-weight: 900; font-size: 22px; letter-spacing: .08em; text-transform: uppercase; transform: rotate(-8deg); white-space: nowrap; animation: stamp-in .45s cubic-bezier(.2,1.3,.4,1); text-shadow: 0 0 1px currentColor; }
+  @keyframes stamp-in { 0% { transform: scale(2) rotate(-16deg); opacity: 0; } 70% { transform: scale(.94) rotate(-7deg); opacity: 1; } 100% { transform: scale(1) rotate(-8deg); } }
+  .stamp.true { color: var(--green); } .stamp.false { color: var(--red); } .stamp.misleading, .stamp.escalated { color: var(--amber); } .stamp.unverifiable { color: var(--muted); }
+  .verdict .why { color: var(--muted); font-size: 12px; } .verdict .conf { color: var(--text); font-weight: 600; font-size: 12px; }
+  .overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 5; }
+  .overlay .stamp { font-size: 30px; background: rgba(14,17,22,.82); text-align: center; line-height: 1.1; }
+  .overlay .stamp small { display: block; font-size: 12px; letter-spacing: .02em; text-transform: none; font-weight: 700; max-width: 300px; white-space: normal; }
+  .overlay .stamp.rejected { color: var(--red); } .overlay .stamp.fixed { color: var(--green); }
+  .fade-out { animation: fade 0.6s ease-in forwards; }
+  @keyframes fade { to { opacity: 0; transform: scale(.9) rotate(-8deg); } }
+  .toasts { position: absolute; top: 8px; right: 10px; display: flex; flex-direction: column; gap: 4px; align-items: flex-end; z-index: 6; pointer-events: none; }
+  .toast { background: rgba(210,153,34,.95); color: #1a1300; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; max-width: 260px; animation: pop .25s ease-out; box-shadow: 0 4px 12px rgba(0,0,0,.4); }
+
+  /* full log */
+  details.log { border-top: 1px solid var(--line); }
+  details.log summary { cursor: pointer; padding: 8px 14px; color: var(--muted); font-size: 12px; }
+  .feed { padding: 0 14px 10px; max-height: 260px; overflow-y: auto; font-size: 12px; }
+  .ev { padding: 4px 0; border-bottom: 1px dashed #222a35; display: flex; gap: 8px; }
+  .who { flex: 0 0 76px; font-weight: 600; }
+  .who.researcher { color: var(--teal); } .who.advocate { color: var(--green); } .who.skeptic { color: var(--red); }
+  .who.judge { color: var(--purple); } .who.verifier { color: var(--blue); } .who.supervisor { color: var(--amber); } .who.check { color: var(--muted); }
+  .what { flex: 1; color: #c9d1d9; word-break: break-word; } .what.thinking { color: var(--muted); font-style: italic; }
 </style>
 </head>
 <body>
 <header>
   <h1>Done Means Done</h1>
-  <span class="sub">A fact-checking agent team that writes its own definition of done, checks itself, and knows when to stop.</span>
+  <span class="sub">A fact-checking agent team that writes its own definition of done, argues, checks itself, and knows when to stop.</span>
   <span id="mode" class="badge">…</span>
 </header>
+<div id="scoreboard">
+  <div class="tile" id="t-claims"><b>0</b><span>claims</span></div>
+  <div class="tile" id="t-search"><b>0</b><span>searches</span></div>
+  <div class="tile" id="t-debates"><b>0</b><span>debates</span></div>
+  <div class="tile split" id="t-splits"><b>0</b><span>split debates</span></div>
+  <div class="tile rej" id="t-rejected"><b>0</b><span>verdicts rejected</span></div>
+  <div class="tile fix" id="t-fixes"><b>0</b><span>self-corrections</span></div>
+  <div class="tile esc" id="t-esc"><b>0</b><span>escalations</span></div>
+  <div class="tile" id="t-llm"><b>0</b><span>LLM calls</span></div>
+  <div class="tile" id="t-time"><b>0:00</b><span>elapsed</span></div>
+</div>
 <main>
   <div class="side">
     <div class="panel">
@@ -88,6 +182,12 @@
       <label for="text">Article text (downloaded or pasted; up to 6 facts per article)</label>
       <textarea id="text"></textarea>
       <button id="run">Run the team</button>
+      <label for="replay-id">Replay a saved run</label>
+      <div class="row">
+        <select id="replay-id"><option value="">Loading…</option></select>
+        <select id="replay-speed" class="speed"><option value="1">1x</option><option value="2" selected>2x</option><option value="4">4x</option></select>
+      </div>
+      <button id="replay" class="secondary">Replay</button>
     </div>
     <div class="panel">
       <h2>Definition of done (written by the planner)</h2>
@@ -96,14 +196,6 @@
     <div class="panel">
       <h2>Mission checks</h2>
       <div id="mchecks" class="mission-checks"><div class="empty">Not run yet.</div></div>
-    </div>
-    <div class="panel">
-      <h2>Run stats</h2>
-      <div class="stats">
-        <div class="num"><b id="s-llm">0</b><span>LLM calls</span></div>
-        <div class="num"><b id="s-search">0</b><span>searches</span></div>
-        <div class="num"><b id="s-dec">0</b><span>self-corrections</span></div>
-      </div>
     </div>
   </div>
   <div>
@@ -114,49 +206,173 @@
 <script>
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-let counts = { llm: 0, search: 0, dec: 0 };
+const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } };
+// rewrite an element only when its markup changes, so entry animations don't restart on every event
+const setHTML = (el, html) => { if (el && el._html !== html) { el.innerHTML = html; el._html = html; } };
+const favicon = (d) => `https://www.google.com/s2/favicons?domain=${encodeURIComponent(d)}&sz=32`;
 
-function setBusy(busy) {
-  $("run").disabled = busy;
-  $("download").disabled = busy;
+let counts, claims, clock, liveMode = ["…", ""];
+const clockTimer = setInterval(drawClock, 250);
+
+function reset() {
+  counts = { claims: 0, search: 0, debates: 0, splits: 0, rejected: 0, fixes: 0, esc: 0, llm: 0 };
+  claims = {};
+  clock = { t0: null, evT: 0, wall: 0, speed: 1, running: false };
+  $("banner").className = ""; $("banner").textContent = "";
+  $("mchecks").innerHTML = '<div class="empty">Running…</div>';
+  $("dod").innerHTML = '<div class="empty">The planner is writing the definition of done…</div>';
+  $("claims").innerHTML = '<div class="empty">Planner is writing the definition of done…</div>';
+  drawScore();
 }
 
-fetch("/api/config").then((r) => r.json()).then((c) => {
-  $("text").value = c.sample;
-  const m = $("mode");
-  m.textContent = c.mock ? "offline mock mode" : `live · ${c.model_strong.split("/").pop()} + ${c.model_fast.split("/").pop()}`;
-  m.className = "badge " + (c.mock ? "mock" : "live");
-});
+// ---------- scoreboard ----------
+const TILES = { claims: "t-claims", search: "t-search", debates: "t-debates", splits: "t-splits", rejected: "t-rejected", fixes: "t-fixes", esc: "t-esc", llm: "t-llm" };
+function bump(key, n = 1) {
+  counts[key] += n;
+  const t = $(TILES[key]);
+  t.querySelector("b").textContent = counts[key];
+  t.classList.add("bump"); setTimeout(() => t.classList.remove("bump"), 400);
+}
+function drawScore() { for (const k in TILES) $(TILES[k]).querySelector("b").textContent = counts[k]; drawClock(); }
+function drawClock() {
+  if (!clock || clock.t0 === null) { $("t-time").querySelector("b").textContent = "0:00"; return; }
+  let s = clock.evT - clock.t0;
+  if (clock.running) s += (Date.now() - clock.wall) / 1000 * clock.speed;
+  s = Math.max(0, Math.floor(s));
+  $("t-time").querySelector("b").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
 
-function addEv(claim, who, text, cls = "") {
-  const feed = document.querySelector(`#card-${claim} .feed`);
+// ---------- per-claim helpers ----------
+const card = (id) => $(`card-${id}`);
+const q = (id, sel) => card(id)?.querySelector(sel);
+
+function addLog(claim, who, html, cls = "") {
+  const feed = q(claim, ".feed");
   if (!feed) return;
-  const div = document.createElement("div");
-  div.className = "ev";
-  div.innerHTML = `<span class="who ${who}">${esc(who)}</span><span class="what ${cls}">${text}</span>`;
-  feed.appendChild(div);
+  feed.insertAdjacentHTML("beforeend", `<div class="ev"><span class="who ${who}">${esc(who)}</span><span class="what ${cls}">${html}</span></div>`);
   feed.scrollTop = feed.scrollHeight;
 }
 
-function renderVerdict(claim, v, status, reason) {
-  const card = $(`card-${claim}`);
-  card.className = `card ${status}`;
-  card.querySelector(".pill.state").className = `pill state ${status}`;
-  card.querySelector(".pill.state").textContent = status;
-  const box = card.querySelector(".verdict");
-  const verdict = (v && v.verdict) || "unverifiable";
-  const conf = v ? ` · ${Math.round(v.confidence * 100)}% confident` : "";
-  const srcs = (v && v.sources || []).map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener">[${s.n}] ${esc(s.domain)} · ${esc(s.title)}</a>`).join("");
-  box.innerHTML = `<div class="v ${esc(verdict)}">${esc(verdict.toUpperCase())}<span style="font-weight:400;color:var(--muted);font-size:12px">${conf}</span></div>
-    <div class="why">${esc(v ? v.explanation : "")}</div>${srcs}
-    <div class="why" style="margin-top:6px">${status === "escalated" ? "⚑ " : ""}${esc(reason)}</div>`;
-  box.style.display = "block";
+function toast(claim, text) {
+  const box = q(claim, ".toasts");
+  if (!box) return;
+  const t = document.createElement("div");
+  t.className = "toast"; t.textContent = text;
+  box.appendChild(t);
+  setTimeout(() => { t.classList.add("fade-out"); setTimeout(() => t.remove(), 600); }, 2600);
 }
 
+function overlayStamp(claim, kind, label, detail) {
+  const ov = q(claim, ".overlay");
+  if (!ov) return;
+  ov.innerHTML = `<div class="stamp ${kind}">${esc(label)}${detail ? `<small>${esc(detail)}</small>` : ""}</div>`;
+  const s = ov.firstChild;
+  setTimeout(() => s.classList.add("fade-out"), 2000);
+  setTimeout(() => { if (ov.firstChild === s) ov.innerHTML = ""; }, 2700);
+}
+
+function shake(claim) {
+  const c = card(claim);
+  c.classList.remove("shake"); void c.offsetWidth; c.classList.add("shake");
+}
+
+function round(st, n) { return (st.rounds[n] ||= { n, checks: [], failed: false }); }
+
+function sideHtml(cls, label, e, n) {
+  if (!e) return `<div class="side-top">${label} <span class="rnd">R${n}</span></div><div class="dots">building the case</div>`;
+  const top = cls === "for"
+    ? `${label} <span class="rnd">R${n}</span> <span class="stance ${esc(e.stance)}">${esc(e.stance || "?")}</span>`
+    : `<span class="stance ${esc(e.stance)}">${esc(e.stance || "?")}</span> <span class="rnd">R${n}</span> ${label}`;
+  return `<div class="side-top">${top}</div><div class="bubble" title="${esc(e.text)}">${esc(e.text)}</div>
+    <div class="meter"><i style="width:${Math.round((e.strength ?? 0.5) * 100)}%"></i></div>`;
+}
+
+function drawDebate(claim) {
+  const st = claims[claim], r = st.rounds[st.debateRound];
+  if (!r) return;
+  const f = q(claim, ".side-col.for"), a = q(claim, ".side-col.against");
+  setHTML(f, sideHtml("for", "FOR", r.adv, r.n));
+  setHTML(a, sideHtml("against", "AGAINST", r.skp, r.n));
+  f.classList.toggle("conceded", r.adv?.stance === "concedes");
+  a.classList.toggle("conceded", r.skp?.stance === "concedes");
+  const clash = q(claim, ".clash");
+  if (r.adv && r.skp) {
+    const split = r.adv.stance === "supports" && r.skp.stance === "refutes";
+    clash.className = `clash ${split ? "split" : "agree"}`;
+    clash.textContent = split ? "⚔ SPLIT" : "AGREE";
+    // dashed marker: where the two arguments pull before the judge rules (-1 = false, +1 = true)
+    const pull = (e) => (e.stance === "supports" ? 1 : e.stance === "refutes" ? -1 : 0) * (e.strength ?? 0.5);
+    const x = Math.max(-1, Math.min(1, (pull(r.adv) + pull(r.skp)) / 2));
+    q(claim, ".marker.pull").style.left = `${50 + 50 * x}%`;
+  } else {
+    clash.className = "clash agree"; clash.textContent = "…";
+  }
+}
+
+function moveJudge(claim, v) {
+  const m = q(claim, ".marker.judge");
+  const conf = v.confidence ?? 0.5;
+  const x = { true: conf, false: -conf, misleading: -(0.15 + 0.25 * conf) }[v.verdict] ?? 0;
+  m.className = `marker judge show ${esc(v.verdict)}`;
+  m.style.left = `${50 + 50 * x}%`;
+}
+
+function drawRounds(claim) {
+  const st = claims[claim];
+  const ns = Object.keys(st.rounds).map(Number).sort((a, b) => a - b);
+  setHTML(q(claim, ".rounds"), ns.filter((n) => st.rounds[n].judge).map((n) => {
+    const r = st.rounds[n];
+    const fails = r.checks.filter((c) => !c.passed);
+    const result = fails.length
+      ? `<span class="bad">✗ ${esc(fails.map((c) => c.name.replaceAll("_", " ")).join(", "))}</span> <span class="why" style="color:var(--muted)">${esc(fails[0].detail)}</span>`
+      : r.checks.length ? `<span class="ok">✓ ${r.checks.length} checks</span>` : `<span class="dots">checking</span>`;
+    const act = r.decision ? `<span class="arrow">→</span><span class="act">${esc(r.decision)}</span>` : "";
+    return `<div class="rstep ${fails.length ? "failed" : ""}"><span class="rn">R${n}</span>
+      <span class="jv ${esc(r.judge.verdict)}">⚖ ${esc(r.judge.verdict.toUpperCase())} ${Math.round(r.judge.confidence * 100)}%</span>
+      <span class="arrow">→</span>${result}${act}</div>`;
+  }).join(""));
+}
+
+function drawChips(claim) {
+  const st = claims[claim], r = st.rounds[st.debateRound] || {};
+  const adv = new Set(r.adv?.cites || []), skp = new Set(r.skp?.cites || []);
+  const judge = new Set((st.lastVerdict?.sources || []).map((s) => s.n));
+  const ns = [...new Set([...adv, ...skp, ...judge])].sort((a, b) => a - b);
+  if (!ns.length) { q(claim, ".chips-wrap").style.display = "none"; return; }
+  q(claim, ".chips-wrap").style.display = "";
+  setHTML(q(claim, ".chips"), ns.map((n) => {
+    const url = st.evidence[n - 1] || (st.lastVerdict?.sources || []).find((s) => s.n === n)?.url || "";
+    const d = host(url) || `source ${n}`;
+    const who = adv.has(n) && skp.has(n) ? "both" : adv.has(n) ? "adv" : skp.has(n) ? "skp" : "";
+    return `<a class="chip ${who} ${judge.has(n) ? "judge" : ""}" href="${esc(url)}" target="_blank" rel="noopener" title="[${n}] ${esc(url)}">
+      <img src="${favicon(d)}" alt="" loading="lazy"><span class="d">[${n}] ${esc(d)}</span></a>`;
+  }).join(""));
+}
+
+function renderVerdict(claim, v, status, reason) {
+  const c = card(claim);
+  c.classList.remove("done", "escalated", "unverifiable");
+  c.classList.add(status);
+  const pill = c.querySelector(".pill.state");
+  pill.className = `pill state ${status}`; pill.textContent = status;
+  const verdict = (v && v.verdict) || "unverifiable";
+  const kind = status === "escalated" ? "escalated" : status === "unverifiable" ? "unverifiable" : verdict;
+  const label = status === "escalated" ? "Human review" : status === "unverifiable" ? "Unverifiable" : verdict;
+  const box = c.querySelector(".verdict");
+  box.innerHTML = `<div class="stamp ${esc(kind)}">${esc(label)}</div>
+    <div><div class="conf">${v ? `${esc(verdict.toUpperCase())} · ${Math.round(v.confidence * 100)}% confident` : ""}</div>
+    <div class="why">${esc(v ? v.explanation : "")}</div>
+    <div class="why" style="margin-top:4px">${status === "escalated" ? "⚑ " : ""}${esc(reason)}</div></div>`;
+  box.classList.add("show");
+  if (v) moveJudge(claim, v);
+}
+
+// ---------- event handler (live and replay) ----------
 function handle(ev) {
+  if (ev.t) { clock.evT = ev.t; clock.wall = Date.now(); }
   switch (ev.type) {
     case "mission_start":
-      $("banner").className = ""; $("banner").textContent = "";
+      clock.t0 = ev.t; clock.running = true;
       break;
     case "plan": {
       const d = ev.dod;
@@ -168,76 +384,161 @@ function handle(ev) {
           <div class="num"><b>${d.max_judge_rounds}</b><span>max judge rounds</span></div>
         </div>
         <ul class="crit">${d.acceptance_criteria.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
-        ${d.escalate_when ? `<div class="why" style="color:var(--amber);margin-top:8px">Ask a human when: ${esc(d.escalate_when)}</div>` : ""}`;
-      counts.llm++;
+        ${d.escalate_when ? `<div style="color:var(--amber);margin-top:8px;font-size:12px">Ask a human when: ${esc(d.escalate_when)}</div>` : ""}`;
+      bump("llm");
       break;
     }
     case "claims":
-      counts.llm++;
+      bump("llm");
+      bump("claims", ev.claims.length);
+      ev.claims.forEach((c) => { claims[c.id] = { evidence: [], rounds: {}, debateRound: 0, everRejected: false, lastVerdict: null }; });
       $("claims").innerHTML = ev.claims.map((c) => `
-        <div class="card" id="card-${c.id}">
-          <div class="card-head"><span class="cid">${c.id}</span><span class="txt">${esc(c.text)}</span>
+        <div class="card" id="card-${esc(c.id)}">
+          <div class="card-head"><span class="cid">${esc(c.id)}</span><span class="txt">${esc(c.text)}</span>
             ${c.high_stakes ? '<span class="pill stakes">high stakes</span>' : ""}<span class="pill state working">working</span></div>
-          <div class="feed"></div>
-          <div class="verdict" style="display:none"></div>
+          <div class="stage">
+            <div class="faceoff">
+              <div class="side-col for"><div class="side-top">FOR</div><div class="dots">waiting for evidence</div></div>
+              <div class="vs">VS<span class="clash agree">…</span></div>
+              <div class="side-col against"><div class="side-top">AGAINST</div><div class="dots">waiting for evidence</div></div>
+            </div>
+            <div class="tug"><div class="track"><div class="marker pull"></div><div class="marker judge">⚖</div></div>
+              <div class="tug-labels"><span class="f">FALSE</span><span class="m">misleading · unverifiable</span><span class="t">TRUE</span></div></div>
+            <div class="rounds"></div>
+            <div class="chips-wrap" style="display:none">
+              <div class="chips"></div>
+              <div class="legend"><span><i style="background:var(--green)"></i>cited FOR</span><span><i style="background:var(--red)"></i>cited AGAINST</span>
+                <span><i style="background:var(--purple)"></i>both sides</span><span><i style="background:var(--gold)"></i>judge relied on it</span></div>
+            </div>
+            <div class="overlay"></div>
+            <div class="toasts"></div>
+          </div>
+          <div class="verdict"></div>
+          <details class="log"><summary>Full log</summary><div class="feed"></div></details>
         </div>`).join("");
       break;
-    case "agent":
-      if (ev.status === "thinking") counts.llm++;
-      addEv(ev.claim, ev.agent, esc(ev.text), ev.status === "thinking" ? "thinking" : "");
+    case "agent": {
+      const st = claims[ev.claim];
+      if (ev.status === "thinking") bump("llm");
+      addLog(ev.claim, ev.agent, esc(ev.text), ev.status === "thinking" ? "thinking" : "");
+      if (!st) break;
+      if (ev.agent === "advocate" && ev.status === "thinking") {
+        st.debateRound = Object.keys(st.rounds).length + 1;
+        round(st, st.debateRound); drawDebate(ev.claim);
+      } else if ((ev.agent === "advocate" || ev.agent === "skeptic") && ev.status === "said") {
+        const r = round(st, ev.round ?? st.debateRound);
+        r[ev.agent === "advocate" ? "adv" : "skp"] = ev;
+        st.debateRound = r.n;
+        if (r.adv && r.skp) { bump("debates"); if (r.adv.stance === "supports" && r.skp.stance === "refutes") bump("splits"); }
+        drawDebate(ev.claim); drawChips(ev.claim);
+      } else if (ev.agent === "judge" && ev.status === "said" && ev.verdict) {
+        const r = round(st, ev.round ?? st.debateRound);
+        r.judge = ev.verdict; st.lastVerdict = ev.verdict;
+        moveJudge(ev.claim, ev.verdict); drawRounds(ev.claim); drawChips(ev.claim);
+      }
       break;
+    }
     case "search":
-      counts.search++;
-      addEv(ev.claim, "researcher", ev.error
+      bump("search");
+      if (claims[ev.claim] && !ev.error) claims[ev.claim].evidence.push(...(ev.results || []).map((r) => r.url));
+      addLog(ev.claim, "researcher", ev.error
         ? `<span class="bad">search failed</span>: ${esc(ev.error)}`
         : `🔎 “${esc(ev.query)}” → <b>${ev.count}</b> new results`);
+      if (!ev.error && ev.count === 0) toast(ev.claim, "SEARCH EMPTY · new angle");
       break;
     case "check":
       if (!ev.claim) {
         if ($("mchecks").querySelector(".empty")) $("mchecks").innerHTML = "";
         $("mchecks").insertAdjacentHTML("beforeend", `<div class="${ev.passed ? "ok" : "bad"}">${ev.passed ? "✓" : "✗"} ${esc(ev.name.replaceAll("_", " "))}</div>`);
-      } else {
-        addEv(ev.claim, "check", `<span class="${ev.passed ? "ok" : "bad"}">${ev.passed ? "✓" : "✗"} ${esc(ev.name.replaceAll("_", " "))}</span> <span style="color:var(--muted)">${esc(ev.detail)}</span>`);
+        break;
+      }
+      addLog(ev.claim, "check", `<span class="${ev.passed ? "ok" : "bad"}">${ev.passed ? "✓" : "✗"} ${esc(ev.name.replaceAll("_", " "))}</span> <span style="color:var(--muted)">${esc(ev.detail)}</span>`);
+      {
+        const st = claims[ev.claim];
+        if (!st) break;
+        const r = round(st, ev.round ?? st.debateRound);
+        r.checks.push(ev);
+        if (!ev.passed && !r.failed) {
+          r.failed = true; st.everRejected = true; bump("rejected");
+          shake(ev.claim); overlayStamp(ev.claim, "rejected", "Rejected", ev.detail);
+        } else if (ev.passed && ev.name === "independent_verifier" && st.everRejected) {
+          overlayStamp(ev.claim, "fixed", "Fixed", `passed on round ${r.n}`);
+        }
+        drawRounds(ev.claim);
       }
       break;
     case "decision":
-      counts.dec++;
-      addEv(ev.claim, "supervisor", `<b>${esc(ev.action.toUpperCase())}</b> · ${esc(ev.reason)}`);
+    case "loop": {
+      bump("fixes");
+      const action = ev.type === "loop" ? "LOOP CAUGHT" : ev.action.toUpperCase();
+      addLog(ev.claim, "supervisor", `<b>${esc(action)}</b> · ${esc(ev.reason || ev.text)}`);
+      toast(ev.claim, `SUPERVISOR · ${action}`);
+      const st = claims[ev.claim];
+      if (st && st.rounds[st.debateRound]?.judge) { st.rounds[st.debateRound].decision = action; drawRounds(ev.claim); }
       break;
-    case "loop":
-      counts.dec++;
-      addEv(ev.claim, "supervisor", `<b>LOOP CAUGHT</b> · ${esc(ev.text)}`);
-      break;
+    }
     case "claim_done":
+      if (ev.status === "escalated") bump("esc");
       renderVerdict(ev.claim, ev.verdict, ev.status, ev.reason);
       break;
     case "mission_done": {
       const s = ev.summary;
-      counts.llm = s.stats.llm_calls; counts.search = s.stats.searches;
+      clock.running = false;
+      counts.llm = s.stats.llm_calls; counts.search = s.stats.searches; drawScore();
       const b = $("banner");
-      if (s.escalations.length) {
-        b.className = "warn";
-        b.textContent = `Done. ${s.claims.length - s.escalations.length} claims closed on their own; ${s.escalations.length} flagged for a human (${s.escalations.join(", ")}).`;
+      const by = (st) => s.claims.filter((c) => c.status === st).length;
+      const [ok, unv, hum] = [by("done"), by("unverifiable"), by("escalated")];
+      if (!s.done) {
+        b.className = "warn"; b.textContent = "The mission ended without meeting its definition of done.";
+      } else if (ok === s.claims.length) {
+        b.className = "ok"; b.textContent = `Done. All ${ok} claims verified with sources, no human needed.`;
       } else {
-        b.className = s.done ? "ok" : "warn";
-        b.textContent = s.done ? `Done. All ${s.claims.length} claims passed the definition of done with no human needed.` : "The mission ended without meeting its definition of done.";
+        b.className = "warn";
+        b.textContent = `Done. ${ok} verified with sources` + (unv ? `, ${unv} marked unverifiable` : "") +
+          (hum ? `, ${hum} flagged for a human (${s.escalations.join(", ")})` : "") + ". Every claim was closed on purpose.";
       }
-      $("run").disabled = false;
+      busy(false);
       break;
     }
     case "error":
-      $("banner").className = "err"; $("banner").textContent = ev.message; $("run").disabled = false;
+      clock.running = false;
+      $("banner").className = "err"; $("banner").textContent = ev.message; busy(false);
       break;
   }
-  $("s-llm").textContent = counts.llm; $("s-search").textContent = counts.search; $("s-dec").textContent = counts.dec;
 }
+
+// ---------- live run, replay ----------
+let session = 0;  // bumped by every run/replay so a stale replay stops feeding events
+function busy(on) { for (const id of ["run", "download", "replay"]) $(id).disabled = on; }
+function setMode(text, cls) { const m = $("mode"); m.textContent = text; m.className = "badge " + cls; }
+
+fetch("/api/config").then((r) => r.json()).then((c) => {
+  $("text").value = c.sample;
+  liveMode = c.mock ? ["offline mock mode", "mock"] : [`live · ${c.model_strong.split("/").pop()} + ${c.model_fast.split("/").pop()}`, "live"];
+  setMode(...liveMode);
+});
+
+function loadRuns() {
+  return fetch("/api/runs").then((r) => r.json()).then((runs) => {
+    $("replay-id").innerHTML = runs.length
+      ? runs.map((r) => `<option value="${esc(r.id)}">${new Date(r.t * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} · ${r.claims} claims · ${r.mock ? "mock" : "live"} · ${esc(r.id)}</option>`).join("")
+      : '<option value="">No saved runs yet</option>';
+  });
+}
+// ?replay=<id>&speed=4 starts a replay on load, so a saved run can be opened from a link
+loadRuns().then(() => {
+  const p = new URLSearchParams(location.search);
+  if (!p.get("replay")) return;
+  if (![...$("replay-id").options].some((o) => o.value === p.get("replay"))) return;
+  $("replay-id").value = p.get("replay");
+  if (["1", "2", "4"].includes(p.get("speed"))) $("replay-speed").value = p.get("speed");
+  $("replay").click();
+});
 
 async function runMission() {
   if (!$("text").value.trim()) return;
-  setBusy(true);
-  counts = { llm: 0, search: 0, dec: 0 };
-  $("mchecks").innerHTML = '<div class="empty">Running…</div>';
-  $("claims").innerHTML = '<div class="empty">Planner is writing the definition of done…</div>';
+  const my = ++session;
+  busy(true); reset(); setMode(...liveMode);
   try {
     const resp = await fetch("/api/run", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: $("text").value, goal: $("goal").value }) });
     if (!resp.ok) throw new Error("Could not start the fact-check. Please try again.");
@@ -251,13 +552,13 @@ async function runMission() {
       let i;
       while ((i = buf.indexOf("\n\n")) >= 0) {
         const chunk = buf.slice(0, i); buf = buf.slice(i + 2);
-        if (chunk.startsWith("data: ")) handle(JSON.parse(chunk.slice(6)));
+        if (chunk.startsWith("data: ") && my === session) handle(JSON.parse(chunk.slice(6)));
       }
     }
   } catch (e) {
     handle({ type: "error", message: String(e) });
   }
-  setBusy(false);
+  busy(false); loadRuns();
 }
 
 $("run").onclick = runMission;
@@ -267,7 +568,7 @@ $("download").onclick = async () => {
     $("article-status").textContent = "Enter a valid article link first.";
     return;
   }
-  setBusy(true);
+  busy(true);
   $("article-status").textContent = "Downloading and extracting the article…";
   try {
     const resp = await fetch("/api/article", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url }) });
@@ -282,9 +583,32 @@ $("download").onclick = async () => {
   } catch (e) {
     $("article-status").textContent = e.message;
   } finally {
-    setBusy(false);
+    busy(false);
   }
 };
+
+$("replay").onclick = async () => {
+  const id = $("replay-id").value;
+  if (!id) return;
+  const my = ++session, speed = Number($("replay-speed").value);
+  busy(true); reset(); clock.speed = speed;
+  setMode(`replay · ${id} · ${speed}x`, "replay");
+  const { events } = await fetch(`/api/runs/${encodeURIComponent(id)}`).then((r) => r.json());
+  for (let i = 0; i < events.length && my === session; i++) {
+    if (i) {
+      // original timing divided by speed; long model waits are capped at 4s so the replay never stalls on stage
+      const gap = Math.min(4, Math.max(0, (events[i].t - events[i - 1].t) / speed));
+      await new Promise((res) => setTimeout(res, gap * 1000));
+    }
+    if (my === session) handle(events[i]);
+  }
+  busy(false);
+};
+
+reset();
+$("mchecks").innerHTML = '<div class="empty">Not run yet.</div>';
+$("dod").innerHTML = '<div class="empty">The planner writes this when the mission starts.</div>';
+$("claims").innerHTML = '<div class="empty">Claims appear here once the extractor has read the text.</div>';
 </script>
 </body>
 </html>
